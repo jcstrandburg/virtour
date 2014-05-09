@@ -46,26 +46,40 @@ public  class StopGenerator {
 		
 	}
 	
-	private static void ParseMainScreen(String data)
+	private static Stop[] ParseMainScreen(String data)
 	{
+		Stop[] returned;
 		try {
 			JSONObject jsonObject = new JSONObject(data);
 			JSONArray stops = jsonObject.getJSONObject("result").getJSONArray("StopList");
 			Log.d("StopGenerator", stops.toString());
+			
+			returned = new Stop[stops.length()];
+			
+			for (int i = 0; i < stops.length() ; i++){
+				JSONObject stop = stops.getJSONObject(i);
+				returned[i] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),-1,-1,stop.getString("StopQRIdentifier"),stop.getString("StopContent"));
+			}
+			return returned;
+			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
-	private static void ParseSingleStop(String data)
+	private static Stop ParseSingleStop(String data)
 	{
 		try {
 			JSONObject jsonObject = new JSONObject(data);
 			JSONObject stop = jsonObject.getJSONObject("result");
 			Log.d("StopGenerator", stop.toString());
+			
+			return new Stop(stop.getString("StopName"),stop.getInt("StopID"),-1,-1,stop.getString("StopQRIdentifier"),stop.getString("StopContent"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 }
