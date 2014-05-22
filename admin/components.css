@@ -1,0 +1,8 @@
+div.component { 
+    background-color:lightgrey;
+    margin: 10px;
+}
+
+div.componentSection {
+    display: inline-block;
+}
