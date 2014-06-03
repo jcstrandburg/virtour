@@ -20,6 +20,12 @@ function readJSON() {
     json = $("textarea[name=jsontarget]").val();
     framework.loadFromJSON( json);
 }
+
+//laod the framework and init the json box
+$(document).ready( function() {
+	$("textarea[name=jsontarget]").val("");
+	framework = new ComponentFramework( "compContainer");
+});
 </script>
 </head>
 <body>

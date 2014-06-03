@@ -254,8 +254,4 @@ VideoComponent.prototype.renderInnerHTML = function() {
 var framework;
 var logger;
 
-$(document).ready( function() {
-    $("textarea[name=jsontarget]").val("");
-	logger = new Logger( $('textarea[name=logbox]'));
-	framework = new ComponentFramework( "compContainer");	
-});
+logger = new Logger( $('textarea[name=logbox]'));
