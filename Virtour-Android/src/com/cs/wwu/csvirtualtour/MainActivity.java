@@ -13,24 +13,26 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnClickListener, OnTaskCompleted {
 
-	private static final LinearLayout.LayoutParams MAIN_LAYOUT_PARAMS = new LinearLayout.LayoutParams(
+	public static final LinearLayout.LayoutParams MAIN_LAYOUT_PARAMS = new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.MATCH_PARENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT);
-	private static final LinearLayout.LayoutParams CONTENT_LAYOUT_PARAMS = new LinearLayout.LayoutParams(
+	public static final LinearLayout.LayoutParams CONTENT_LAYOUT_PARAMS = new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT);
-	private static final TableLayout.LayoutParams BUTTON_LAYOUT_PARAMS = new TableLayout.LayoutParams(
+	public static final TableLayout.LayoutParams BUTTON_LAYOUT_PARAMS = new TableLayout.LayoutParams(
 			TableLayout.LayoutParams.MATCH_PARENT,
 			TableLayout.LayoutParams.WRAP_CONTENT,
 			1f);
-	private static final TableLayout.LayoutParams IMAGE_LAYOUT_PARAMS = new TableLayout.LayoutParams(
-			0,
+	public static final TableLayout.LayoutParams IMAGE_LAYOUT_PARAMS = new TableLayout.LayoutParams(
+			TableLayout.LayoutParams.WRAP_CONTENT,
 			TableLayout.LayoutParams.MATCH_PARENT,
 			3f);
+	public static final TableLayout.LayoutParams SECOND_IMAGE_LAYOUT_PARAMS = new TableLayout.LayoutParams(
+			TableLayout.LayoutParams.MATCH_PARENT,
+			TableLayout.LayoutParams.MATCH_PARENT);
 	
 	//Floor Button IDs
 	private static final int FIRST_FLOOR_ID = 9871;
@@ -86,6 +88,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		ImageView mapView = new ImageView(this);
 		mapView.setLayoutParams(IMAGE_LAYOUT_PARAMS);
 		mapView.setImageResource(R.drawable.cf1);
+		mapView.setAdjustViewBounds(true);
 		mapView.setId(MAP_IMAGE_ID);
 		
 		//Buttons for floors (These could maybe be made more dynamic later)

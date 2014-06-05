@@ -1,22 +1,34 @@
 package com.cs.wwu.csvirtualtour;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.Menu;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
-public class StopActivity extends Activity {
+import org.json.*;
 
+public class StopActivity extends Activity implements OnTaskCompleted {
+
+	private static final int MAIN_LAYOUT_ID = 5001;
+	
 	int stopID;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_stop);
+		//setContentView(R.layout.activity_stop);
 		stopID = getIntent().getExtras().getInt("StopID");
-		//Create a ScrollView To Hold Everything
-		ScrollView mainView = new ScrollView(this);
-		//Add The Map
-		//Add Rest of Stop Content
+		
+		//Zero out Title Bar
+		setTitle("");
+		BuildStop();
+
 	}
 
 	@Override
@@ -27,17 +39,136 @@ public class StopActivity extends Activity {
 	}
 	
 	private void BuildStop(){
+		//Create a ScrollView To Hold Everything
+		ScrollView mainView = new ScrollView(this);
+		mainView.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
 		
-	}
-	private void AddTextWidget(){
+		LinearLayout mainLayout = new LinearLayout(this);
+		mainLayout.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
+		mainLayout.setId(MAIN_LAYOUT_ID);
+		mainLayout.setOrientation(LinearLayout.VERTICAL);
+		
+		//Add The Map
+		LinearLayout mapLayout = new LinearLayout(this);
+		mapLayout.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
+		mapLayout.setOrientation(LinearLayout.HORIZONTAL);
+		
+		
+		ImageView mapView = new ImageView(this);
+		mapView.setLayoutParams(MainActivity.SECOND_IMAGE_LAYOUT_PARAMS);
+		mapView.setImageResource(R.drawable.cf420);
+		mapView.setBackgroundColor(Color.CYAN);
+		mapView.setAdjustViewBounds(true);
+		
+		
+		//Add Rest of Stop Content
+		StopRetrievalTask sr = new StopRetrievalTask(this);
+		sr.execute(stopID);
+		
+		mapLayout.addView(mapView);
+		
+		mainLayout.addView(mapLayout);
+		mainView.addView(mainLayout);
+		
+		setContentView(mainView,MainActivity.MAIN_LAYOUT_PARAMS);
+		
 		
 	}
 	
-	private void AddImageWidget(){
+	private void BuildStopContent(JSONArray StopContent){
+		
+		for(int i = 0; i < StopContent.length(); i++)
+		{
+			try {
+				JSONObject widget = StopContent.getJSONObject(i);
+				String widgetType = widget.getString("type");
+				
+				if (widgetType.equals("text")) {
+					
+					AddTextWidget(widget);
+				}
+				else if (widgetType.equals("image")){
+					AddImageWidget(widget);
+				}
+				else if (widgetType.equals("video")) {
+					
+					AddVideoWidget(widget);
+				}
+				
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	private void AddTextWidget(JSONObject Widget) throws JSONException{
+		String title, content = "";
+		
+		title = Widget.getString("title");
+		content = Widget.getString("content");
+		
+		//Make the Title Text Underlined
+		SpannableString underlinedTitle = new SpannableString(content);
+		underlinedTitle.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+		
+		//Title Text
+		TextView textTitle = new TextView(this);
+		textTitle.setLayoutParams(MainActivity.CONTENT_LAYOUT_PARAMS);
+		textTitle.setTextSize(20);
+		textTitle.setText(underlinedTitle);
+		
+		//COntent Text
+		TextView textContent = new TextView(this);
+		textContent.setLayoutParams(MainActivity.CONTENT_LAYOUT_PARAMS);
+		textContent.setText(content);
+		
+		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
+		
+		MainLayout.addView(textTitle);
+		MainLayout.addView(textContent);
 		
 	}
 	
-	private void AddVideoWidget(){
+	private void AddImageWidget(JSONObject Widget) throws JSONException{
+		Uri url = null;
+		
+		String urlString = Widget.getString("url");
+		
+		url = Uri.parse(urlString);
+		
+		
+		ImageView imageContent = new ImageView(this);
+		imageContent.setLayoutParams(MainActivity.IMAGE_LAYOUT_PARAMS);
+		imageContent.setImageURI(url);
+		
+		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
+		MainLayout.addView(imageContent);
+		
+	}
+	
+	private void AddVideoWidget(JSONObject Widget){
+		
+	}
+
+	@Override
+	public void onTaskCompleted(Stop[] s) {
+		// TODO Auto-generated method stub
+		Stop thisStop = s[0];
+		
+		JSONArray stopContent = null;
+		try {
+			stopContent = new JSONArray(thisStop.getStopContent());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		setTitle(thisStop.getStopName());
+		BuildStopContent(stopContent);
+		
+		
 		
 	}
 	
