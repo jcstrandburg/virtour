@@ -1,9 +1,8 @@
 package com.cs.wwu.csvirtualtour;
 
-import java.net.MalformedURLException;
-
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -33,8 +32,13 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			TableLayout.LayoutParams.MATCH_PARENT,
 			3f);
 	
+	//Floor Button IDs
 	private static final int FIRST_FLOOR_ID = 9871;
 	private static final int FOURTH_FLOOR_ID = 9874;
+	
+	//Layout IDs
+	private static final int SCROLLING_LAYOUT_ID = 5001;
+	private static final int MAP_IMAGE_ID = 5002;
 	
 	
 	@Override
@@ -66,7 +70,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		LinearLayout scrollLayout = new LinearLayout(this);
 		scrollLayout.setLayoutParams(CONTENT_LAYOUT_PARAMS);
 		scrollLayout.setOrientation(LinearLayout.VERTICAL);
-		scrollLayout.setId(5001);
+		scrollLayout.setId(SCROLLING_LAYOUT_ID);
 		
 		//Add map with floor buttons
 		LinearLayout mapLayout = new LinearLayout(this);
@@ -82,6 +86,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		ImageView mapView = new ImageView(this);
 		mapView.setLayoutParams(IMAGE_LAYOUT_PARAMS);
 		mapView.setImageResource(R.drawable.cf1);
+		mapView.setId(MAP_IMAGE_ID);
 		
 		//Buttons for floors (These could maybe be made more dynamic later)
 		Button b_floor1 = new Button(this);
@@ -90,14 +95,26 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		b_floor1.setLayoutParams(BUTTON_LAYOUT_PARAMS);
 		b_floor4.setLayoutParams(BUTTON_LAYOUT_PARAMS);
 		
-		b_floor1.setText("First \n Floor");
-		b_floor4.setText("Fourth \n Floor");
+		b_floor1.setText(R.string.floor1);
+		b_floor4.setText(R.string.floor4);
 		
 		b_floor1.setId(FIRST_FLOOR_ID);
 		b_floor4.setId(FOURTH_FLOOR_ID);
 		
 		b_floor1.setOnClickListener(this);
 		b_floor4.setOnClickListener(this);
+		
+		//Welcome Message Static for now, but could be made to be pulled from web
+		TextView welcomeTitle = new TextView(this);
+		welcomeTitle.setLayoutParams(CONTENT_LAYOUT_PARAMS);
+		welcomeTitle.setText(R.string.welcome);
+		welcomeTitle.setTextSize(20);
+		
+		TextView welcomeMessage = new TextView(this);
+		welcomeMessage.setLayoutParams(CONTENT_LAYOUT_PARAMS);
+		welcomeMessage.setText(R.string.welcome_para);
+		
+		
 		//Put it all together
 		buttonLayout.addView(b_floor1);
 		buttonLayout.addView(b_floor4);
@@ -106,6 +123,8 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		mapLayout.addView(buttonLayout);
 		
 		scrollLayout.addView(mapLayout);
+		scrollLayout.addView(welcomeTitle);
+		scrollLayout.addView(welcomeMessage);
 		//scrollLayout.addView(mapLayout);
 		//Add Buttons to View 
 		addStops();
@@ -137,8 +156,25 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	public void onClick(View v){
 		
 		int id = v.getId();
-		Toast t = Toast.makeText(this, "Button Clicked " + id , Toast.LENGTH_LONG);
-		t.show();
+		//Toast t = Toast.makeText(this, "Button Clicked " + id , Toast.LENGTH_LONG);
+		//t.show();
+		
+		//If a map button was clicked, change the map, 
+		//otherwise open a stop activity with the specified stop
+		if (id == FIRST_FLOOR_ID){
+			ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
+			map.setImageResource(R.drawable.cf1);
+		}
+		else if (id == FOURTH_FLOOR_ID){
+			ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
+			map.setImageResource(R.drawable.cf4);
+			
+		}
+		else{
+			Intent intent = new Intent(this,StopActivity.class);
+			intent.putExtra("StopID", id);
+			startActivity(intent);
+		}
 		
 	}
 	

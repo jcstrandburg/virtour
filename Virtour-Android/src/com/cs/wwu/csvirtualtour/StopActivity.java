@@ -7,15 +7,15 @@ import android.widget.ScrollView;
 
 public class StopActivity extends Activity {
 
+	int stopID;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_stop);
-		
+		setContentView(R.layout.activity_stop);
+		stopID = getIntent().getExtras().getInt("StopID");
 		//Create a ScrollView To Hold Everything
 		ScrollView mainView = new ScrollView(this);
 		//Add The Map
-		
 		//Add Rest of Stop Content
 	}
 
@@ -24,6 +24,21 @@ public class StopActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.stop, menu);
 		return true;
+	}
+	
+	private void BuildStop(){
+		
+	}
+	private void AddTextWidget(){
+		
+	}
+	
+	private void AddImageWidget(){
+		
+	}
+	
+	private void AddVideoWidget(){
+		
 	}
 	
 	
