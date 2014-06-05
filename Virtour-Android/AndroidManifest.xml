@@ -7,7 +7,8 @@
     <uses-sdk
         android:minSdkVersion="10"
         android:targetSdkVersion="19" />
-
+	<uses-permission android:name="android.permission.INTERNET" /> 
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -21,6 +22,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.cs.wwu.csvirtualtour.StopActivity"
+            android:label="@string/title_activity_stop" >
         </activity>
     </application>
 

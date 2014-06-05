@@ -13,19 +13,23 @@ import org.json.JSONObject;
 import android.util.Log;
 
 
-public  class StopGenerator {
+public class StopGenerator {
 
+	private static final String STOP_URL = "http://strandburg.us/virtour/api/jsonapi.php?stopid=";
 	public StopGenerator() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static void RequestStop(int stopId) throws MalformedURLException
+	public static Stop[] RequestStop(int stopId) throws MalformedURLException
 	{
 		StringBuilder builder = new StringBuilder();
-		URL  httpGet = new URL("http://strandburg.us/virtour/api/jsonapi.php?stopid=" + stopId);
+		URL  httpGet = new URL(STOP_URL + stopId);
 		
+		
+		Log.d("StopGenerator", "Got here");
 		try {
 				InputStream in = httpGet.openStream();
+				Log.d("StopGenerator","Got herrre");
 				InputStreamReader content = new InputStreamReader(in);
 				BufferedReader reader = new BufferedReader(content);
 				String line;
@@ -33,15 +37,15 @@ public  class StopGenerator {
 					builder.append(line);
 		}			
 		} catch (Exception e) {
-			//e.printStackTrace();
+			Log.d("StopGenerator","" + e.getMessage());
 		}
 		//stopId 0 is a special case for the main Screen
 		if (stopId == 0) {
-			ParseMainScreen(builder.toString());
+			return ParseMainScreen(builder.toString());
 		}
 		//All other stops just have a single stop entity
 		else {
-			ParseSingleStop(builder.toString());
+			return ParseSingleStop(builder.toString());
 		}
 		
 	}
@@ -58,28 +62,29 @@ public  class StopGenerator {
 			
 			for (int i = 0; i < stops.length() ; i++){
 				JSONObject stop = stops.getJSONObject(i);
-				returned[i] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),-1,-1,stop.getString("StopQRIdentifier"),stop.getString("StopContent"));
+				returned[i] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),-1,-1,stop.getString("StopQRIdentifier"),"null");
 			}
 			return returned;
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.d("StopGenerator",e.getMessage());
 		}
 		return null;
 	}
 	
-	private static Stop ParseSingleStop(String data)
+	private static Stop[] ParseSingleStop(String data)
 	{
+		Stop[] returned = new Stop[1];
 		try {
 			JSONObject jsonObject = new JSONObject(data);
 			JSONObject stop = jsonObject.getJSONObject("result");
 			Log.d("StopGenerator", stop.toString());
 			
-			return new Stop(stop.getString("StopName"),stop.getInt("StopID"),-1,-1,stop.getString("StopQRIdentifier"),stop.getString("StopContent"));
+			returned[0] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),-1,-1,stop.getString("StopQRIdentifier"),stop.getString("StopContent"));
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Log.d("StopGenerator","" + e.getMessage());
 		}
-		return null;
+		return returned;
 	}
 }

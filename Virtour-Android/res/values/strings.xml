@@ -14,5 +14,7 @@
     <string name="floor1">1st Floor</string>
     <string name="map">Map</string>
     <string name="cf420">CF 420</string>
+    <string name="title_activity_stop">StopActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
