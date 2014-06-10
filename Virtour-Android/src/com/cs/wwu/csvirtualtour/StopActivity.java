@@ -111,8 +111,8 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 		content = Widget.getString("content");
 		
 		//Make the Title Text Underlined
-		SpannableString underlinedTitle = new SpannableString(content);
-		underlinedTitle.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+		SpannableString underlinedTitle = new SpannableString(title);
+		underlinedTitle.setSpan(new UnderlineSpan(), 0, title.length(), 0);
 		
 		//Title Text
 		TextView textTitle = new TextView(this);
@@ -133,16 +133,13 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 	}
 	
 	private void AddImageWidget(JSONObject Widget) throws JSONException{
-		Uri url = null;
-		
+
 		String urlString = Widget.getString("url");
-		
-		url = Uri.parse(urlString);
-		
-		
+			
 		ImageView imageContent = new ImageView(this);
 		imageContent.setLayoutParams(MainActivity.IMAGE_LAYOUT_PARAMS);
-		imageContent.setImageURI(url);
+		ImageRetrievalTask irt = new ImageRetrievalTask(imageContent);
+		irt.execute(urlString);
 		
 		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
 		MainLayout.addView(imageContent);
