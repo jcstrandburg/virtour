@@ -21,7 +21,7 @@ function readJSON() {
     framework.loadFromJSON( json);
 }
 
-//laod the framework and init the json box
+//load the framework and init the json box
 $(document).ready( function() {
 	$("textarea[name=jsontarget]").val("");
 	framework = new ComponentFramework( "compContainer");
@@ -36,7 +36,6 @@ JSON input/output<br>
 <button onClick='renderJSON()'>Render JSON</button>
 <button onClick='readJSON()'>Read JSON</button>
 
-<button onClick='framework.addComponent(Component)'>Add Component</button>
 <button onClick='framework.addComponent(TextComponent)'>Add Text Component</button>
 <button onClick='framework.addComponent(ImageComponent)'>Add Image Component</button>
 <button onClick='framework.addComponent(VideoComponent)'>Add Video Component</button>

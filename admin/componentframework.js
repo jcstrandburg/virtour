@@ -1,3 +1,5 @@
+var resourceIndexLocation = "media/list.php";
+
 //class inheritance helper function
 function inherits(subClass, baseClass) {
 
@@ -18,7 +20,7 @@ function Logger(target) {
 }
 
 Logger.prototype.log = function(text) {
-	//this.target.val( this.target.val() + text + '\n');
+	this.target.val( this.target.val() + text + '\n');
 }
 
 
@@ -52,6 +54,7 @@ ComponentFramework.prototype.moveComponent = function( index, direction) {
 
 ComponentFramework.prototype.redrawComponent = function( index) {
     $("div#comp"+index).replaceWith( this.components[index].renderHTML());
+	this.components[index].applyEventHandlers();
 }
 
 ComponentFramework.prototype.deleteComponent = function( index) {
@@ -85,6 +88,9 @@ ComponentFramework.prototype.renderHTML = function() {
 
 ComponentFramework.prototype.renderToContainer = function() {
 	this.container.html( this.renderHTML());
+	for ( var i = 0; i < this.components.length; i++) {
+		this.components[i].applyEventHandlers();
+	}
 }
 
 ComponentFramework.prototype.renderJSON = function() {
@@ -104,7 +110,6 @@ ComponentFramework.prototype.loadFromJSON = function( json) {
     this.components = [];
 
     for ( var i = 0; i < comps.length; i++) {
-        logger.log( comps[i].type + " " + comps[i].content);
         switch ( comps[i].type) {
             case 'text':
                 logger.log( "found a text object");
@@ -126,14 +131,15 @@ ComponentFramework.prototype.loadFromJSON = function( json) {
 
 ComponentFramework.prototype.addComponent = function(proto) {
 
-	var comp = new proto( this.components.length);
+	var comp = new proto(this, this.components.length);
 	this.components.push( comp);
     this.renderToContainer();
 }
 
 
 //Component
-function Component(index) {
+function Component(parent, index) {
+	this.parent = parent;
 	this.index = index;
 }
 
@@ -171,10 +177,15 @@ Component.prototype.renderInnerHTML = function() {
 	return "Generic Component: "+this.index;
 }
 
+Component.prototype.applyEventHandlers = function() {
+	var index = this.index;
+	$("#comp"+index).find("input,textarea").change(function(){framework.updateComponent(index);});
+}
+
 //TextComponent Class
 inherits( TextComponent, Component);
-function TextComponent(index, data) {
-	Component.call(this, index);
+function TextComponent(parent, index, data) {
+	Component.call(this, parent, index);
 
     //check for initializer object, else default initialize
     if (data) {
@@ -200,58 +211,162 @@ TextComponent.prototype.updateFromDOM = function(source) {
 TextComponent.prototype.renderInnerHTML = function() {
 
     return "<h4>Text Component</h4>"+
-           "Title: <input type='text' name='title' onChange='framework.updateComponent("+this.index+")' value='"+this.title+"'><br>"+
+           "Title: <input type='text' name='title' value='"+this.title+"'><br>"+
            "Content: <br>"+
-           "<textarea name='content' onChange='framework.updateComponent("+this.index+")'>"+this.content+"</textarea>";
+           "<textarea name='content'>"+this.content+"</textarea>";
+}
+
+TextComponent.prototype.applyEventHandlers = function() {
+	Component.prototype.applyEventHandlers.call(this);
 }
 
 
 //ImageComponent Class
 inherits( ImageComponent, Component);
-function ImageComponent( index, data) {
-    Component.call( this, index);
+function ImageComponent( parent, index, data) {
+    Component.call( this, parent, index);
 
     //check for initializer object, else default initialize
     if (data) {
+		this.url = data.url;
+		this.title = data.title;
     }
     else {
+		this.title = "";
+		this.url = "";
     }
 }
 
 ImageComponent.prototype.getJSONObject = function() {
-    return {type: 'image', url: 'have a url'};
+    return {type: 'image', title: this.title, url: this.url};
 }
 
 ImageComponent.prototype.updateFromDOM = function(source) {
+    this.title = source.find("input[name=title]").val();
+    this.url = source.find("input[name=url]").val();
 }
 
 ImageComponent.prototype.renderInnerHTML = function() {
-	return "ImageComp: "+this.index;
+    return "<h4>Image Component</h4>"+
+           "Title: <input type='text' name='title' value='"+this.title+"'><br>"+
+           "URL: <input type='text' name='url' value='"+this.url+"'><br>"+		   
+		   "<button class='fileSelectButton'>Select Media From Server</button>"+
+		   "</div><div class='previewPane'>"+
+           "<img class='largePreview' alt='Preview' src='"+this.url+"'><br>";
+}
+
+ImageComponent.prototype.applyEventHandlers = function() {
+	Component.prototype.applyEventHandlers.call(this);
+	var container = $("#comp"+this.index);
+	
+	container.find("img.largePreview").error(function(){
+		$(this).attr('src', 'error.png');
+	});
+	
+	container.find("button.fileSelectButton").click(function(){
+		DoFileSelect("image", function(filepath){
+			container.find('input[name=url]').val(filepath).change();
+		});
+	});
+	
+	container.find("input[name=url]").change(function(){
+		url = $(this).val();
+		container.find("img.largePreview").attr('src', url);
+	});
+	
+	img = container.find("img.largePreview");
+	img.attr('src', img.attr('src'));
 }
 
 //VideoComponent Class
 inherits( VideoComponent, Component);
-function VideoComponent( index, data) {
-    Component.call( this, index);
+function VideoComponent( parent, index, data) {
+    Component.call( this, parent, index);
 
     //check for initializer object, else default initialize
     if (data) {
+		this.url = data.url;
+		this.title = data.title;
     }
     else {
+		this.title = "";
+		this.url = "";
     }
 }
 
 VideoComponent.prototype.getJSONObject = function() {
-    return {type: 'video', url: 'have a url'};
+    return {type: 'video', title: this.title, url: this.url};
 }
 VideoComponent.prototype.updateFromDOM = function(source) {
+    this.title = source.find("input[name=title]").val();
+    this.url = source.find("input[name=url]").val();
 }
 
 VideoComponent.prototype.renderInnerHTML = function() {
-	return "VideoComp: "+this.index;
+    return "<h4>Video Component</h4>"+
+           "Title: <input type='text' name='title' value='"+this.title+"'><br>"+
+           "URL: <input type='text' name='url' value='"+this.url+"'><br>"+
+		   "<button class='fileSelectButton' type='button'>Select Media From Server</button>"+
+		   "</div><div class='previewPane'>"+
+           "Preview: <video alt='preview' src='"+this.url+"' controls></video><br>";
+}
+
+VideoComponent.prototype.applyEventHandlers = function() {
+	Component.prototype.applyEventHandlers.call(this);
+	var container = $("#comp"+this.index);
+	
+	container.find("button.fileSelectButton").click(function(){
+		DoFileSelect("video", function(filepath){
+			container.find('input[name=url]').val(filepath).change();
+		});
+	});	
+	
+	container.find("input[name=url]").change(function(){
+		url = $(this).val();
+		container.find("video").attr('src', url);
+	});
+}
+
+function DoFileSelect(type, callback) {
+
+	var filters;
+	if (type == 'image') {
+		filters = "png,jpg";
+	}
+	else if (type == 'video') {
+		filters = "mp4,ogg";	
+	}
+
+	html = "<div class='fileSelectWrapper'><div class='fileSelectInner'><h3>Select File (formats: "+filters+")</h3><select name='url' id='mediaSelector' size=20></select><br><button id='doFileSelect'>Select File</button><button id='cancelFileSelect'>Cancel</button></div></div>"
+	$("body").append(html);
+	
+	$.ajax({
+		url: resourceIndexLocation,
+		type: "POST",
+		dataType: "json",
+		data: {"filters": filters},
+		
+	}).done(function(data){
+		var string = "";
+		options = $('#mediaSelector');
+		for(var elem in data) {
+			string += (elem + ": " + data[elem]+'\n');
+			options.append("<option value='"+data[elem]+"'>"+elem+"</option>");
+		}
+	});
+	
+	$("#doFileSelect").click(function(){
+		callback($('#mediaSelector').val());
+		$(".fileSelectWrapper").remove();		
+	});
+	$("#cancelFileSelect").click(function(){
+		$(".fileSelectWrapper").remove();
+	});
 }
 
 var framework;
 var logger;
 
-logger = new Logger( $('textarea[name=logbox]'));
+$(document).ready(function(){
+	logger = new Logger( $('textarea[name=logbox]'));
+});
