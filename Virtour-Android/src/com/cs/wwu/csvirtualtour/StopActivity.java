@@ -23,8 +23,12 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_stop);
-		stopID = getIntent().getExtras().getInt("StopID");
-		
+		if (getIntent().getExtras() != null){
+			stopID = getIntent().getExtras().getInt("StopID");
+		}
+		else {
+			stopID = Integer.parseInt(getIntent().getDataString().replace("CSVTour://", ""));
+		}
 		//Zero out Title Bar
 		setTitle("");
 		BuildStop();

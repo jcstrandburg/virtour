@@ -15,6 +15,7 @@
     <string name="map">Map</string>
     <string name="cf420">CF 420</string>
     <string name="title_activity_stop">StopActivity</string>
+    <string name="title_activity_qr">QRActivity</string>
     <string name="hello_world">Hello world!</string>
 
 </resources>

@@ -38,6 +38,9 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	private static final int FIRST_FLOOR_ID = 9871;
 	private static final int FOURTH_FLOOR_ID = 9874;
 	
+	//QR Code Button ID
+	private static final int QR_READER_ID = 9890;
+	
 	//Layout IDs
 	private static final int SCROLLING_LAYOUT_ID = 5001;
 	private static final int MAP_IMAGE_ID = 5002;
@@ -117,6 +120,13 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		welcomeMessage.setLayoutParams(CONTENT_LAYOUT_PARAMS);
 		welcomeMessage.setText(R.string.welcome_para);
 		
+		//Temporary QR scanning button
+		Button b_scanner = new Button(this);
+		b_scanner.setLayoutParams(BUTTON_LAYOUT_PARAMS);
+		b_scanner.setText("QR Code");
+		b_scanner.setOnClickListener(this);
+		b_scanner.setId(QR_READER_ID);
+		
 		
 		//Put it all together
 		buttonLayout.addView(b_floor1);
@@ -128,6 +138,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		scrollLayout.addView(mapLayout);
 		scrollLayout.addView(welcomeTitle);
 		scrollLayout.addView(welcomeMessage);
+		scrollLayout.addView(b_scanner);
 		//scrollLayout.addView(mapLayout);
 		//Add Buttons to View 
 		addStops();
@@ -162,21 +173,29 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		//Toast t = Toast.makeText(this, "Button Clicked " + id , Toast.LENGTH_LONG);
 		//t.show();
 		
-		//If a map button was clicked, change the map, 
-		//otherwise open a stop activity with the specified stop
-		if (id == FIRST_FLOOR_ID){
-			ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
-			map.setImageResource(R.drawable.cf1);
-		}
-		else if (id == FOURTH_FLOOR_ID){
-			ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
-			map.setImageResource(R.drawable.cf4);
-			
-		}
-		else{
-			Intent intent = new Intent(this,StopActivity.class);
-			intent.putExtra("StopID", id);
+		//if QR Reader was clicked, open a new QR Scanner
+		if (id == QR_READER_ID){
+			Intent intent = new Intent(this,QRReaderActivitiy.class);
+			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(intent);
+		}
+		else {
+			//If a map button was clicked, change the map, 
+			//otherwise open a stop activity with the specified stop
+			if (id == FIRST_FLOOR_ID){
+				ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
+				map.setImageResource(R.drawable.cf1);
+			}
+			else if (id == FOURTH_FLOOR_ID){
+				ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
+				map.setImageResource(R.drawable.cf4);
+				
+			}
+			else{
+				Intent intent = new Intent(this,StopActivity.class);
+				intent.putExtra("StopID", id);
+				startActivity(intent);
+			}
 		}
 		
 	}
