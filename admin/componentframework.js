@@ -113,15 +113,15 @@ ComponentFramework.prototype.loadFromJSON = function( json) {
         switch ( comps[i].type) {
             case 'text':
                 logger.log( "found a text object");
-                this.components.push( new TextComponent( i, comps[i]));
+                this.components.push( new TextComponent(this, i, comps[i]));
                 break;
             case 'image':
                 logger.log( "found an image object");
-                this.components.push( new ImageComponent( i, comps[i]));
+                this.components.push( new ImageComponent(this, i, comps[i]));
                 break;
             case 'video':
                 logger.log( "found a video");
-                this.components.push( new VideoComponent( i, comps[i]));
+                this.components.push( new VideoComponent(this, i, comps[i]));
                 break;
         }
     }
@@ -232,6 +232,7 @@ function ImageComponent( parent, index, data) {
 		this.title = data.title;
     }
     else {
+        alert('aint no data');
 		this.title = "";
 		this.url = "";
     }
