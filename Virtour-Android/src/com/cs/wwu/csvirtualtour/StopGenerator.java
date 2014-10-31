@@ -26,10 +26,10 @@ public class StopGenerator {
 		URL  httpGet = new URL(STOP_URL + stopId);
 		
 		
-		Log.d("StopGenerator", "Got here");
+		//Log.d("StopGenerator", "Got here");
 		try {
 				InputStream in = httpGet.openStream();
-				Log.d("StopGenerator","Got herrre");
+				//Log.d("StopGenerator","Got herrre");
 				InputStreamReader content = new InputStreamReader(in);
 				BufferedReader reader = new BufferedReader(content);
 				String line;
@@ -56,7 +56,7 @@ public class StopGenerator {
 		try {
 			JSONObject jsonObject = new JSONObject(data);
 			JSONArray stops = jsonObject.getJSONObject("result").getJSONArray("StopList");
-			Log.d("StopGenerator", stops.toString());
+			//Log.d("StopGenerator", stops.toString());
 			
 			returned = new Stop[stops.length()];
 			
@@ -79,7 +79,7 @@ public class StopGenerator {
 		try {
 			JSONObject jsonObject = new JSONObject(data);
 			JSONObject stop = jsonObject.getJSONObject("result");
-			Log.d("StopGenerator", stop.toString());
+			//Log.d("StopGenerator", stop.toString());
 			
 			returned[0] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),-1,-1,stop.getString("StopQRIdentifier"),stop.getString("StopContent"));
 		} catch (JSONException e) {

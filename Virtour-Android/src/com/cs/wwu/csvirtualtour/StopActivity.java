@@ -1,22 +1,30 @@
 package com.cs.wwu.csvirtualtour;
 
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.Menu;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import org.json.*;
 
 public class StopActivity extends Activity implements OnTaskCompleted {
 
 	private static final int MAIN_LAYOUT_ID = 5001;
+	private static final int VIDEO_VIEW_ID = 4999;
 	
 	int stopID;
 	@Override
@@ -57,21 +65,26 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 		mapLayout.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
 		mapLayout.setOrientation(LinearLayout.HORIZONTAL);
 		
-		
 		ImageView mapView = new ImageView(this);
 		mapView.setLayoutParams(MainActivity.SECOND_IMAGE_LAYOUT_PARAMS);
 		mapView.setImageResource(R.drawable.cf420);
 		mapView.setBackgroundColor(Color.CYAN);
-		mapView.setAdjustViewBounds(true);
+		mapView.setAdjustViewBounds(true);;
 		
-		
+//		//Video tests
+//		ImageView videoPreview = new ImageView(this);
+//		videoPreview.setLayoutParams(new TableLayout.LayoutParams(50,50));
+//		
+//		Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail("https://ia700401.us.archive.org/19/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", MediaStore.Images.Thumbnails.MINI_KIND);
+//		videoPreview.setImageBitmap(thumbnail);
+			
 		//Add Rest of Stop Content
 		StopRetrievalTask sr = new StopRetrievalTask(this);
 		sr.execute(stopID);
 		
 		mapLayout.addView(mapView);
-		
 		mainLayout.addView(mapLayout);
+		mainLayout.addView(videoPreview);
 		mainView.addView(mainLayout);
 		
 		setContentView(mainView,MainActivity.MAIN_LAYOUT_PARAMS);
@@ -150,8 +163,19 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 		
 	}
 	
-	private void AddVideoWidget(JSONObject Widget){
+	//TODO: This doesn't work
+	private void AddVideoWidget(JSONObject Widget) throws JSONException {
 		
+		String urlString = Widget.getString("url");
+		
+		ImageView videoPreview = new ImageView(this);
+		videoPreview.setLayoutParams(MainActivity.IMAGE_LAYOUT_PARAMS);
+		
+		Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(urlString, MediaStore.Images.Thumbnails.MINI_KIND);
+		videoPreview.setImageBitmap(thumbnail);
+		
+		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
+		MainLayout.addView(videoPreview);
 	}
 
 	@Override

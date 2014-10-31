@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -35,6 +36,9 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	public static final TableLayout.LayoutParams SECOND_IMAGE_LAYOUT_PARAMS = new TableLayout.LayoutParams(
 			TableLayout.LayoutParams.MATCH_PARENT,
 			TableLayout.LayoutParams.MATCH_PARENT);
+	public static final FrameLayout.LayoutParams VIDEO_LAYOUT_PARAMS = new FrameLayout.LayoutParams(
+			FrameLayout.LayoutParams.WRAP_CONTENT,
+			FrameLayout.LayoutParams.WRAP_CONTENT);
 	
 	//Floor Button IDs
 	private static final int FIRST_FLOOR_ID = 9871;
