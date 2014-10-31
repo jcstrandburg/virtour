@@ -24,7 +24,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
-                android:src="@drawable/cf1" 
                 android:contentDescription="@string/map" />
 
             <LinearLayout

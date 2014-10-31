@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 
 public class MainActivity extends Activity implements OnClickListener, OnTaskCompleted {
 
@@ -44,6 +46,8 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	//Layout IDs
 	private static final int SCROLLING_LAYOUT_ID = 5001;
 	private static final int MAP_IMAGE_ID = 5002;
+	
+	ImageProcessor ip;
 	
 	
 	@Override
@@ -90,7 +94,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		//Map (Maybe pull image from web later)
 		ImageView mapView = new ImageView(this);
 		mapView.setLayoutParams(IMAGE_LAYOUT_PARAMS);
-		mapView.setImageResource(R.drawable.cf1);
+		mapView.setImageResource(R.drawable.cf1_trace);
 		mapView.setAdjustViewBounds(true);
 		mapView.setId(MAP_IMAGE_ID);
 		
@@ -184,11 +188,15 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			//otherwise open a stop activity with the specified stop
 			if (id == FIRST_FLOOR_ID){
 				ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
-				map.setImageResource(R.drawable.cf1);
+				//((BitmapDrawable)map.getDrawable()).getBitmap().recycle();
+				map.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), 
+						R.drawable.cf1_trace, map.getWidth(), map.getHeight()));
 			}
 			else if (id == FOURTH_FLOOR_ID){
 				ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
-				map.setImageResource(R.drawable.cf4);
+				((BitmapDrawable)map.getDrawable()).getBitmap().recycle();
+				map.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), 
+						R.drawable.cf4_trace, map.getWidth(), map.getHeight()));
 				
 			}
 			else{
@@ -199,6 +207,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		}
 		
 	}
+	
 	
 	public void onTaskCompleted(Stop[] stops){
 		
