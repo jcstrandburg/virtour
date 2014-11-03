@@ -1,14 +1,14 @@
 package com.cs.wwu.csvirtualtour;
 
-import android.media.ThumbnailUtils;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.app.Activity;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -16,7 +16,9 @@ import android.widget.TextView;
 
 import org.json.*;
 
-public class StopActivity extends Activity implements OnTaskCompleted {
+import wseemann.media.FFmpegMediaMetadataRetriever;
+
+public class StopActivity extends Activity implements OnClickListener, OnTaskCompleted {
 
 	private static final int MAIN_LAYOUT_ID = 5001;
 	
@@ -44,7 +46,7 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 		return true;
 	}
 	
-	private void BuildStop(){
+	private void BuildStop() {
 		//Create a ScrollView To Hold Everything
 		ScrollView mainView = new ScrollView(this);
 		mainView.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
@@ -65,13 +67,10 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 		mapView.setBackgroundColor(Color.CYAN);
 		mapView.setAdjustViewBounds(true);;
 		
-//		//Video tests
-//		ImageView videoPreview = new ImageView(this);
-//		videoPreview.setLayoutParams(new TableLayout.LayoutParams(50,50));
-//		
-//		Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail("https://ia700401.us.archive.org/19/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", MediaStore.Images.Thumbnails.MINI_KIND);
-//		videoPreview.setImageBitmap(thumbnail);
-			
+//		//Sample preview retrieval
+//		FFmpegMediaMetadataRetriever mr = new FFmpegMediaMetadataRetriever();
+//		mr.setDataSource("http://strandburg.us/virtour/admin/media/rabbits are stupid.mp4");
+//		mapView.setImageBitmap(mr.getFrameAtTime(500));
 		//Add Rest of Stop Content
 		StopRetrievalTask sr = new StopRetrievalTask(this);
 		sr.execute(stopID);
@@ -165,8 +164,16 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 		ImageView videoPreview = new ImageView(this);
 		videoPreview.setLayoutParams(MainActivity.IMAGE_LAYOUT_PARAMS);
 		
-		Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(urlString, MediaStore.Images.Thumbnails.MINI_KIND);
-		videoPreview.setImageBitmap(thumbnail);
+		ThumbnailRetrievalTask trt = new ThumbnailRetrievalTask(videoPreview);
+		videoPreview.setOnClickListener(this);
+		trt.execute(urlString);
+		videoPreview.setContentDescription(urlString);
+//		FFmpegMediaMetadataRetriever mr = new FFmpegMediaMetadataRetriever();
+//		mr.setDataSource(urlString);
+//		videoPreview.setImageBitmap(mr.getFrameAtTime(500));
+		
+//		trt.execute("http://www.ebookfrenzy.com/android_book/movie.mp4");
+//		videoPreview.setContentDescription("http://www.ebookfrenzy.com/android_book/movie.mp4");
 		
 		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
 		MainLayout.addView(videoPreview);
@@ -188,6 +195,16 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 		BuildStopContent(stopContent);
 		
 		
+		
+	}
+
+	@Override
+	public void onClick(View v) {
+		if (v instanceof ImageView)
+		{
+			Intent intent = new Intent(this, VideoPlayerActivity.class);
+			intent.putExtra("url",v.getContentDescription());
+		}
 		
 	}
 	

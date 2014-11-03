@@ -1,5 +1,6 @@
 package com.cs.wwu.csvirtualtour;
 
+import com.cs.wwu.csvirtualtour.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -14,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 
 public class MainActivity extends Activity implements OnClickListener, OnTaskCompleted {
