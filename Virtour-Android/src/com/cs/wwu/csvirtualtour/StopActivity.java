@@ -1,7 +1,6 @@
 package com.cs.wwu.csvirtualtour;
 
 import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.app.Activity;
@@ -9,22 +8,17 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.Menu;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import org.json.*;
 
 public class StopActivity extends Activity implements OnTaskCompleted {
 
 	private static final int MAIN_LAYOUT_ID = 5001;
-	private static final int VIDEO_VIEW_ID = 4999;
 	
 	int stopID;
 	@Override
@@ -84,7 +78,7 @@ public class StopActivity extends Activity implements OnTaskCompleted {
 		
 		mapLayout.addView(mapView);
 		mainLayout.addView(mapLayout);
-		mainLayout.addView(videoPreview);
+		//mainLayout.addView(videoPreview);
 		mainView.addView(mainLayout);
 		
 		setContentView(mainView,MainActivity.MAIN_LAYOUT_PARAMS);
