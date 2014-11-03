@@ -232,7 +232,6 @@ function ImageComponent( parent, index, data) {
 		this.title = data.title;
     }
     else {
-        alert('aint no data');
 		this.title = "";
 		this.url = "";
     }
