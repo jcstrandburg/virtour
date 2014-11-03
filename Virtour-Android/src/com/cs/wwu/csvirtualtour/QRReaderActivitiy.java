@@ -1,32 +1,18 @@
 package com.cs.wwu.csvirtualtour;
 
-import java.net.MalformedURLException;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.Button;
-import android.widget.Toast;
-
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.AutoFocusCallback;
-import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 
 import android.widget.TextView;
-import android.graphics.ImageFormat;
-import android.widget.Toast;
-
 /* Import ZBar Class files */
 import net.sourceforge.zbar.ImageScanner;
 import net.sourceforge.zbar.Image;
@@ -45,7 +31,6 @@ public class QRReaderActivitiy extends Activity
 
     ImageScanner scanner;
 
-    private boolean barcodeScanned = false;
     private boolean previewing = true;
 
     static {
@@ -148,7 +133,7 @@ public class QRReaderActivitiy extends Activity
 							e.printStackTrace();
 						}
                         //scanText.setText("barcode result " + sym.getData());
-                        barcodeScanned = true;
+                        //barcodeScanned = true;
                     }
                 }
             }
