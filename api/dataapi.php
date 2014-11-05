@@ -28,7 +28,7 @@ abstract class DataAPI {
 			}
 			
 			if ( $this->stopid == 0 ) {
-				$query = "Select StopID, StopName, StopPosition, StopX, StopY, StopQRIdentifier FROM Stops WHERE StopID<>0";
+				$query = "Select StopID, StopName, StopOrder, StopX, StopY, StopQRIdentifier FROM Stops WHERE StopID<>0";
 				$stmt = $db->query( $query);
 				$rows = $stmt->fetchAll( PDO::FETCH_ASSOC);
 				
