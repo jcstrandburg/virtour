@@ -204,6 +204,9 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		{
 			Intent intent = new Intent(this, VideoPlayerActivity.class);
 			intent.putExtra("url",v.getContentDescription());
+			//Coment
+			startActivity(intent);
+			
 		}
 		
 	}
