@@ -21,7 +21,7 @@ public class ThumbnailRetrievalTask extends AsyncTask<String, Void, Bitmap> {
 		
 		FFmpegMediaMetadataRetriever mr = new FFmpegMediaMetadataRetriever();
 		mr.setDataSource(url);
-		retrievedImage = mr.getFrameAtTime(500);
+		retrievedImage = mr.getFrameAtTime(20000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
 		
 		return retrievedImage;
 	}

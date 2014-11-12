@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -39,6 +40,10 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	public static final FrameLayout.LayoutParams VIDEO_LAYOUT_PARAMS = new FrameLayout.LayoutParams(
 			FrameLayout.LayoutParams.WRAP_CONTENT,
 			FrameLayout.LayoutParams.WRAP_CONTENT);
+	public static RelativeLayout.LayoutParams CENTERED_IMAGE_LAYOUT_PARAMS = new RelativeLayout.LayoutParams(
+			RelativeLayout.LayoutParams.WRAP_CONTENT,
+			RelativeLayout.LayoutParams.WRAP_CONTENT
+			);
 	
 	//Floor Button IDs
 	private static final int FIRST_FLOOR_ID = 9871;
@@ -157,21 +162,9 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	}
 	
 	private void addStops(){
-		
-		//Get stop 0
-		//try {
-			StopRetrievalTask sr = new StopRetrievalTask(this);
-			sr.execute(0);
-			
-			//build a button for each stop (set id so we can determine which stop?)
-			//for (Stop s : stops){
-				//Button Temp = new Button(this);
-				//Temp.setLayoutParams(BUTTON_LAYOUT_PARAMS);
-				//Temp.setText(s.getStopName());
-				//Temp.setId(s.getStopID());
-				//v.addView(Temp);
-				
-			//}
+	
+		StopRetrievalTask sr = new StopRetrievalTask(this);
+		sr.execute(0);
 
 	}
 	
@@ -231,10 +224,6 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			buttonLayout.addView(Temp);
 		}
 		scrollLayout.addView(buttonLayout);
-	}
-	
-	public void openStop(int id){
-		
 	}
 
 }

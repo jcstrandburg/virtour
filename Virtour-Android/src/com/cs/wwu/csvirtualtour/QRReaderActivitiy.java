@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.FrameLayout;
 import android.widget.Button;
+import android.widget.Toast;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.AutoFocusCallback;
@@ -130,6 +131,8 @@ public class QRReaderActivitiy extends Activity
 							startActivity(intent);
 						} catch (NumberFormatException e) {
 							// TODO Auto-generated catch block
+							Toast t = Toast.makeText(getApplicationContext(),"Invalid QR Code",Toast.LENGTH_LONG);
+							t.show();
 							e.printStackTrace();
 						}
                         //scanText.setText("barcode result " + sym.getData());

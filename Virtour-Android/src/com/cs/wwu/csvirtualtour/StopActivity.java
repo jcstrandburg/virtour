@@ -6,17 +6,17 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.json.*;
-
-import wseemann.media.FFmpegMediaMetadataRetriever;
 
 public class StopActivity extends Activity implements OnClickListener, OnTaskCompleted {
 
@@ -67,17 +67,13 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		mapView.setBackgroundColor(Color.CYAN);
 		mapView.setAdjustViewBounds(true);;
 		
-//		//Sample preview retrieval
-//		FFmpegMediaMetadataRetriever mr = new FFmpegMediaMetadataRetriever();
-//		mr.setDataSource("http://strandburg.us/virtour/admin/media/rabbits are stupid.mp4");
-//		mapView.setImageBitmap(mr.getFrameAtTime(500));
-		//Add Rest of Stop Content
+		//Retrive the desired stop
 		StopRetrievalTask sr = new StopRetrievalTask(this);
 		sr.execute(stopID);
 		
+		//Add items to screen
 		mapLayout.addView(mapView);
 		mainLayout.addView(mapLayout);
-		//mainLayout.addView(videoPreview);
 		mainView.addView(mainLayout);
 		
 		setContentView(mainView,MainActivity.MAIN_LAYOUT_PARAMS);
@@ -115,20 +111,14 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	}
 	
 	private void AddTextWidget(JSONObject Widget) throws JSONException{
-		String title, content = "";
+		String titleString, content = "";
 		
-		title = Widget.getString("title");
+		titleString = Widget.getString("title");
 		content = Widget.getString("content");
 		
-		//Make the Title Text Underlined
-		SpannableString underlinedTitle = new SpannableString(title);
-		underlinedTitle.setSpan(new UnderlineSpan(), 0, title.length(), 0);
 		
 		//Title Text
-		TextView textTitle = new TextView(this);
-		textTitle.setLayoutParams(MainActivity.CONTENT_LAYOUT_PARAMS);
-		textTitle.setTextSize(20);
-		textTitle.setText(underlinedTitle);
+		TextView textTitle = GenerateTitle(titleString);
 		
 		//COntent Text
 		TextView textContent = new TextView(this);
@@ -137,46 +127,84 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		
 		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
 		
+		//Add content to screen
 		MainLayout.addView(textTitle);
 		MainLayout.addView(textContent);
 		
 	}
 	
 	private void AddImageWidget(JSONObject Widget) throws JSONException{
-
+		
+		//Retrieve values
 		String urlString = Widget.getString("url");
-			
+		String titleString = Widget.getString("title");
+		
+		//Generate Content
+		TextView textTitle = GenerateTitle(titleString);
 		ImageView imageContent = new ImageView(this);
-		imageContent.setLayoutParams(MainActivity.IMAGE_LAYOUT_PARAMS);
+		imageContent.setLayoutParams(MainActivity.SECOND_IMAGE_LAYOUT_PARAMS);
 		ImageRetrievalTask irt = new ImageRetrievalTask(imageContent);
 		irt.execute(urlString);
 		
+		//Add content to screen
 		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
+		MainLayout.addView(textTitle);
 		MainLayout.addView(imageContent);
 		
 	}
 	
-	//TODO: This doesn't work
 	private void AddVideoWidget(JSONObject Widget) throws JSONException {
 		
+		//Retrieve Values
 		String urlString = Widget.getString("url");
+		String titleString = Widget.getString("title");
+		
+		//Encapsulate image in a Relative Layout, this allows us to superimpose the play button on top
+		RelativeLayout videoLayout = new RelativeLayout(this);
+		videoLayout.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
 		
 		ImageView videoPreview = new ImageView(this);
 		videoPreview.setLayoutParams(MainActivity.IMAGE_LAYOUT_PARAMS);
 		
+		//Create a title for the view preview
+		TextView textTitle = GenerateTitle(titleString);
+
+		//Retrieve a thumbnail and set it to the image preview
 		ThumbnailRetrievalTask trt = new ThumbnailRetrievalTask(videoPreview);
 		videoPreview.setOnClickListener(this);
 		trt.execute(urlString);
 		videoPreview.setContentDescription(urlString);
-//		FFmpegMediaMetadataRetriever mr = new FFmpegMediaMetadataRetriever();
-//		mr.setDataSource(urlString);
-//		videoPreview.setImageBitmap(mr.getFrameAtTime(500));
+		videoLayout.addView(videoPreview);
 		
-//		trt.execute("http://www.ebookfrenzy.com/android_book/movie.mp4");
-//		videoPreview.setContentDescription("http://www.ebookfrenzy.com/android_book/movie.mp4");
+		//Add the play button to the center of the image
+		ImageView playView = new ImageView(this);
+		playView.setImageResource(R.drawable.play);
+		playView.setLayoutParams(MainActivity.CENTERED_IMAGE_LAYOUT_PARAMS);
+		RelativeLayout.LayoutParams lp = (android.widget.RelativeLayout.LayoutParams) playView.getLayoutParams();
+		lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+		videoLayout.addView(playView);
 		
+		//Add content to screen
 		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
-		MainLayout.addView(videoPreview);
+		MainLayout.addView(textTitle);
+		MainLayout.addView(videoLayout);
+	}
+	
+	private TextView GenerateTitle(String titleText) {
+		
+		//Make the Title Text Underlined
+		SpannableString underlinedTitle = new SpannableString(titleText);
+		underlinedTitle.setSpan(new UnderlineSpan(), 0, titleText.length(), 0);
+		
+		//Title Text
+		TextView textTitle = new TextView(this);
+		LinearLayout.LayoutParams titleparams = MainActivity.CONTENT_LAYOUT_PARAMS;
+		titleparams.gravity = Gravity.CENTER;
+		textTitle.setLayoutParams(titleparams);
+		textTitle.setTextSize(20);
+		textTitle.setText(underlinedTitle);
+		
+		return textTitle;
 	}
 
 	@Override
