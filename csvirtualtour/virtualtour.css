@@ -10,6 +10,12 @@ h1, h2, h3
 text-align:center;
 }
 
+.clr {
+	clear: both;
+	height: 0;
+	font-size: 0;
+}
+
 table, th, td {
 	text-align: center;
 	border: 1px solid black;
@@ -18,6 +24,7 @@ table, th, td {
 	margin-right: auto;
 }
 
+/*Component framework styles*/
 div.component { 
     background-color:lightgrey;
     margin: 10px;
@@ -45,6 +52,11 @@ input[type=password] {
 	width: 300px;
 }
 
+textarea {
+	width: 800px;
+	min-height: 200px;
+}
+
 .fileSelectWrapper {
 	position: fixed;
 	left: 0;
@@ -69,3 +81,37 @@ input[type=password] {
 #mediaSelector {
 	width: 90%;
 }
+/*End component framework styles*/
+
+
+/*Clickable map styles*/
+.mapWrapperWrapper {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+.mapWrapper {
+	padding: 0;
+	border: solid 1px black;
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	width: 1000px;
+}
+
+#pin {
+	position: absolute;
+	z-index: 20;
+	width: 20px;
+	height: 30px;
+	margin-left: -10px;
+	margin-top: -25px;
+	left: 10%;
+	top: 10%;
+}
+
+#clickymap {
+	width: 100%;
+}
+/*End clickable map styles*/

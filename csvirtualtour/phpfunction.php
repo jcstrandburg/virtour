@@ -1,20 +1,25 @@
 <?php
 
-
-$header = "
+function make_header($path = './') {
+	ob_start();
+	?>
 	<!DOCTYPE html>
 	<head>
 		<title>Computer Science Department Virtual Tour</title>
-		<link href='virtualtour.css' type='text/css' rel='stylesheet'>
+		<link href='<?php echo $path;?>virtualtour.css' type='text/css' rel='stylesheet'>
 		<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
-		<script type='text/javascript' src='componentframework.js'></script>
+		<script type='text/javascript' src='<?php echo $path;?>componentframework.js'></script>
 	</head>
 	<body>
-		<a href='http://www.wwu.edu'><img src='images.jpg'></a>
+		<a href='http://www.wwu.edu'><img src='<?php echo $path;?>images.jpg'></a>
 		<div class='title'>Computer Science Department Virtual Tour</div>
 		<hr>
-		</br>
-";
+		</br>	
+	<?php	
+	return ob_get_clean();
+}
+
+$header = make_header();
 
 function footer($more) {
 	$html = "
