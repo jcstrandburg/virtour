@@ -2,12 +2,14 @@
 session_start();
 include 'phpfunction.php';
 
-$sent = $_POST['sent'];
-$stopname = $_POST['stopname'];
-$stoporder = $_POST['stoporder'];
-$stopcontent = $_POST['stopcontent'];
-$stopx = $_POST['stopx'];
-$stopy = $_POST['stopy'];
+if (isset($_POST['sent'])) {
+	$sent = $_POST['sent'];
+	$stopname = $_POST['stopname'];
+	$stoporder = $_POST['stoporder'];
+	$stopcontent = $_POST['stopcontent'];
+	$stopx = $_POST['stopx'];
+	$stopy = $_POST['stopy'];
+}
 
 $more = "<a href='stops.php'>List Of Stops</a>
 			</br>";
@@ -27,13 +29,16 @@ else {
 }
 ?>
 
-<? echo $header ?>
+<?php  echo $header ?>
 
 <script>
-	function add(x, y) {
-		var cont = $("form[name=theform]");
-		$('<input type="hidden" name="stopx" value="'+x+'">').appendTo(cont);
-		$('<input type="hidden" name="stopy" value="'+y+'">').appendTo(cont);
+	function set_position(x, y) {
+		$('input[name=stopx]').val(x);
+		$('input[name=stopy]').val(y);
+		
+		css_top = ""+y*100+"%";
+		css_left = ""+x*100+"%";
+		$('#pin').css({'top': css_top, 'left': css_left});
 	}
 
 	function renderJSON() {
@@ -44,9 +49,18 @@ else {
 
 	$(document).ready( function() {
 		framework = new ComponentFramework( 'compContainer');
+		set_position( 0.5, 0.5);
+
+		$("#clickymap").click(
+			function(event){ 
+				var offset = $(this).offset();
+				offx = event.pageX - offset.left;
+				offy = event.pageY - offset.top;
+				set_position(offx/$(this).width(), offy/$(this).height());
+			}	
+		);		
 	});
 </script>
-
 
 
 <h1>Add a New Stop</h1>
@@ -57,37 +71,18 @@ else {
 	<br>
 
 	<h3>Click On The Map For Stop Location</h3>
-	<hr>
-	<img id="fl1" src="cf1.png" width="50%" height="50%"><img id="fl4" src="cf4.png" width="50%" height="50%">
-
-	
-	<script>
-	//get click position
-	$("#fl1").click(
-		function(ele){ 
-			var offset = $(this).offset();
-			offx = ele.clientX - offset.left;
-			offy = ele.clientY - offset.top;
-		
-			add(offx/$(this).width(), offy/$(this).height());
-		}
-	
-	);
-
-	$("#fl4").click(
-		function(ele){ 
-			var offset = $(this).offset();
-			offx = ele.clientX - offset.left;
-			offy = ele.clientY - offset.top;
-		
-			add(offx/$(this).width(), offy/$(this).height());
-		}
-	
-	);
-
-	</script>
+	<div class='mapWrapperWrapper'>
+		<div class='mapWrapper'>
+			<img id='pin' src='pin.gif'/>
+			<img id="clickymap" src="cf1.png"><!--<img id="fl4" src="cf4.png" width="50%" height="50%">-->
+		</div>
+	</div>
+	<hr>	
 
 	<h3>Stop Content</h3>
+	<input type="hidden" name="stopx" value="0.0">
+	<input type="hidden" name="stopy" value="0.0">
+	<input type="hidden" name="mapindex" value="0">	
 	<input type="hidden" name="stopcontent">
 	<input type="hidden" name="sent" value="sent">
 </form>
@@ -102,5 +97,5 @@ else {
 
 <button onClick='renderJSON()'>Add New Stop</button></br></br>
 
-<?echo footer($more)?>
+<?php echo footer($more)?>
 

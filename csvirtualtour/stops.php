@@ -7,17 +7,21 @@ $did = $_GET['did'];	//delete id
 if($_SESSION['user'] == 1 || $_SESSION['user'] == 2) {
 	
 	//remove selected stop
-	mysqli_query($link, "delete from Stops where StopID = '$did)'");
+	if (!empty($did)) {
+		echo "Deleting";
+		mysqli_query($link, "delete from Stops where StopID = '$did)'");
+	}
 	
 	//select all the remaining stops
 	$stops = mysqli_query($link, "select * from Stops");
 	
 	//get all stops
 	if(mysqli_num_rows($stops) != 0) {
+		$table = '';
 		while($row = mysqli_fetch_array($stops)) {
 			$table = $table . "<tr><td>" . $row['StopName'] . "</td>
 			<td>" . $row['StopOrder'] . "</td>
-			<td><a href='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CSVTour://" . $row[StopID] . "' target='_blank'>Click for QR Code</a></td>
+			<td><a href='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CSVTour://" . $row['StopID'] . "' target='_blank'>Click for QR Code</a></td>
 			<td><a href='stopinfo.php?eid=" . $row['StopID'] . "'>Edit</a>/<a href='stops.php?did=" . $row['StopID'] . "'>Delete</a></td></tr>";
 		}
 	}
@@ -33,13 +37,13 @@ else {
 
 ?>
 
-<?echo $header?>
+<?php echo $header?>
 	<h1>List Of Stops</h1>
 	<table>
 		<th>Stop Name</th><th>Stop Order</th><th>QR Code</th><th>Modify Stop</th>
-		<?echo $table?>
+		<?php echo $table?>
 	</table>
-<?echo footer($more)?>
+<?php echo footer($more)?>
 
 
 

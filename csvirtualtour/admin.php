@@ -25,6 +25,7 @@ if($_SESSION['user'] == 1) {
 		$content = $content . '			
 			<h2><a href="stops.php">Stop Directory</a></h2>
 			<h2><a href="stops.php">Staff Directory</a></h2>
+			<h2><a href="media/manage.php">Manage Media Files</a></h2>			
 			<h2><a href="admin.php?change=yes">Change Password</a></h2>
 		';
 	}
