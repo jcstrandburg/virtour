@@ -1,5 +1,3 @@
-<html>
-
 <?php
 session_start();
 include '../phpfunction.php';
@@ -8,6 +6,7 @@ if( !in_array($_SESSION['user'], array(1,2))) {
 	header("Location: ../index.php");
 }
 
+echo "<html>";
 echo make_header('../');
 ?>
 
@@ -189,9 +188,6 @@ foreach ($files as $file) {
 }
 
 foreach ($matches as $match) {
-	/*echo "<div class='filewrapper'><div class='mediafile' data-fileurl='{$match['url']}'>{$match['filename']} | {$match['url']} | {$match['size']} | {$match['extn']}</div>";
-	echo "<form class='delete-form' method='post' action='deletefile.php'><input type='hidden' name='filename' value='{$match['filename']}'><button type='submit'>Delete File</button></form></div>";
-	echo "<br class='clr'>";*/
 ?>
 	
 	<div class='filewrapper'>
@@ -202,7 +198,7 @@ foreach ($matches as $match) {
 		</div>
 		<form class='delete-form' method='post' action='deletefile.php'>
 			<input type='hidden' name='filename' value='<?php echo $match['filename'];?>'/>
-			<input type='submit' value='Delete This'/>
+			<input type='submit' value='Delete File'/>
 		</form>
 		<br class='clr'>
 	</div>

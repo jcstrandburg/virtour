@@ -39,7 +39,7 @@ function footer($more) {
 function get_map_list($path = 'maps/') {
 	$extensions = array('jpg', 'png', 'gif');
 	
-	$matches = [];
+	$matches = array();
 	$files = scandir($path);
 	
 	foreach ($files as $file) {
