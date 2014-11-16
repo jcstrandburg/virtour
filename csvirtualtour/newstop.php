@@ -27,6 +27,8 @@ if($_SESSION['user'] == 1 || $_SESSION['user'] == 2) {
 else {
 	header("Location:index.php");
 }
+
+$maps = get_map_list();
 ?>
 
 <?php  echo $header ?>
@@ -59,6 +61,14 @@ else {
 				set_position(offx/$(this).width(), offy/$(this).height());
 			}	
 		);		
+		
+		$('#map-selector').change(
+			function(event) {
+				var url = $(this).val();
+				$('#clickymap').attr('src', url);
+				$('input[name=mapurl]').val(url);
+			}
+		);		
 	});
 </script>
 
@@ -69,12 +79,24 @@ else {
 	<h2>Stop Name: <input type="text" name="stopname"></h2>
 	<h3>Stop Order: <input type="text" name="stoporder"></h3>
 	<br>
+	
+	<div class='mapSelector'>
+		<h3>Select Map</h3>
+		<select id='map-selector'>
+			<?php
+			$maps = get_map_list();
+			foreach ($maps as $map) {
+				echo "<option value='$map'>$map</option>";
+			}
+			?>
+		</select>
+	</div>	
 
 	<h3>Click On The Map For Stop Location</h3>
 	<div class='mapWrapperWrapper'>
 		<div class='mapWrapper'>
 			<img id='pin' src='pin.gif'/>
-			<img id="clickymap" src="cf1.png"><!--<img id="fl4" src="cf4.png" width="50%" height="50%">-->
+			<img id="clickymap" src="<?php echo $maps[0];?>">
 		</div>
 	</div>
 	<hr>	
@@ -83,6 +105,7 @@ else {
 	<input type="hidden" name="stopx" value="0.0">
 	<input type="hidden" name="stopy" value="0.0">
 	<input type="hidden" name="mapindex" value="0">	
+	<input type="hidden" name="mapurl" value="<?php echo $maps[0];?>">	
 	<input type="hidden" name="stopcontent">
 	<input type="hidden" name="sent" value="sent">
 </form>

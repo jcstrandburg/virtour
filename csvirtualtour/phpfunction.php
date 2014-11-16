@@ -36,6 +36,28 @@ function footer($more) {
 	return $html;
 }
 
+function get_map_list($path = 'maps/') {
+	$extensions = array('jpg', 'png', 'gif');
+	
+	$matches = [];
+	$files = scandir($path);
+	
+	foreach ($files as $file) {
+		$file = $path.$file;
+		if (!is_file($file)) {
+			continue;
+		}
+		$extn = pathinfo($file, PATHINFO_EXTENSION);
+		if ( in_array($extn, $extensions)) {
+			$matches[] = $file;
+		}
+		else {
+		}
+	}
+	
+	return $matches;
+}
+
 $link = mysqli_connect("mysql.cs.wwu.edu", "vut3", "6dSHnxgTZx", "vut3")
     or die("Error " . mysqli_error($link));
 	
