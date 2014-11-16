@@ -65,6 +65,14 @@ $(document).ready( function() {
 			set_position(offx/$(this).width(), offy/$(this).height());
 		}			
 	);
+	
+	$('#map-selector').change(
+		function(event) {
+			var url = $(this).val();
+			$('#clickymap').attr('src', url);
+			$('input[name=mapurl]').val(url);
+		}
+	);
 });
 </script>
 
@@ -72,19 +80,32 @@ $(document).ready( function() {
 <form method="post" name="theform">
 	<h1>Content for Stop Name: <input type="text" name="stopname" value="<?php echo $stopname?>"></h1>
 	<h3>Stop Order: <input type="text" name="stoporder" value="<?php echo $stoporder?>"></h3>
+
+	<div class='mapSelector'>
+		<h3>Select Map</h3>
+		<select id='map-selector'>
+			<?php
+			$maps = get_map_list();
+			foreach ($maps as $map) {
+				echo "<option value='$map'>$map</option>";
+			}
+			?>
+		</select>
+	</div>
 	
 	<h3>Click On The Map For Stop Location</h3>
 	<div class='mapWrapperWrapper'>
 		<div class='mapWrapper'>
 			<img id='pin' src='pin.gif'/>
-			<img id="clickymap" src="cf1.png"><!--<img id="fl4" src="cf4.png" width="50%" height="50%">-->
+			<img id="clickymap" src="maps/cf1.png">
 		</div>
 	</div>
 	<hr>	
 	
 	<input type="hidden" name="stopcontent">
 	<input type="hidden" name="stopx" value="0.0">
-	<input type="hidden" name="stopy" value="0.0">	
+	<input type="hidden" name="stopy" value="0.0">
+	<input type="hidden" name="mapurl" value="">
 	<input type="hidden" name="sent" value="<?php echo $stopid?>">
 </form>
 <button onClick='framework.addComponent(TextComponent)'>Add Text</button>
