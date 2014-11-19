@@ -22,7 +22,7 @@ foreach ($files as $file) {
 $url = $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 $basepath = dirname($url);
 foreach ($matches as $match) {
-	$formatted_matches[$match] = "http://{$basepath}/{$match}";
+	$formatted_matches[$match] = "//{$basepath}/{$match}";
 }
 
 echo json_encode($formatted_matches);

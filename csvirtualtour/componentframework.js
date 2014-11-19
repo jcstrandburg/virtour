@@ -303,7 +303,7 @@ VideoComponent.prototype.getJSONObject = function() {
 }
 VideoComponent.prototype.updateFromDOM = function(source) {
     this.title = source.find("input[name=title]").val();
-    this.url = source.find("input[name=url]").val();
+    this.url = force_http_prefix(source.find("input[name=url]").val());
 }
 
 VideoComponent.prototype.renderInnerHTML = function() {

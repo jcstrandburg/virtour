@@ -18,8 +18,17 @@ function renderJSON() {
 function readJSON() {
 
     json = $("textarea[name=jsontarget]").val();
+    alert( json);
     framework.loadFromJSON( json);
 }
+
+function testJunk() {
+    alert('wat');
+var junk = '[{\"type\":\"text\",\"title\":\"Title\",\"content\":\"Stuuuuuffff\"},{\"type\":\"image\",\"title\":\"Goats\",\"url\":\"http://sw.cs.wwu.edu/~vut3/virtualtour/media/goat.jpg\"}]';
+    alert( junk);
+    framework.loadFromJSON('[{\"type\":\"text\",\"title\":\"Title\",\"content\":\"Stuuuuuffff\"},{\"type\":\"image\",\"title\":\"Goats\",\"url\":\"http://sw.cs.wwu.edu/~vut3/virtualtour/media/goat.jpg\"}]');
+}
+alert('schwat');
 
 //load the framework and init the json box
 $(document).ready( function() {
@@ -35,6 +44,7 @@ JSON input/output<br>
 <textarea name="jsontarget" cols=100 rows=10>  </textarea><br>
 <button onClick='renderJSON()'>Render JSON</button>
 <button onClick='readJSON()'>Read JSON</button>
+<button onClick='testJunk()'>Junk</button>
 
 <button onClick='framework.addComponent(TextComponent)'>Add Text Component</button>
 <button onClick='framework.addComponent(ImageComponent)'>Add Image Component</button>
