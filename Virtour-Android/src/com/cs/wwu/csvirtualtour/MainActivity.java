@@ -1,5 +1,7 @@
 package com.cs.wwu.csvirtualtour;
 
+import java.util.ArrayList;
+
 import com.cs.wwu.csvirtualtour.R;
 import android.os.Bundle;
 import android.app.Activity;
@@ -8,6 +10,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -16,7 +20,9 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 public class MainActivity extends Activity implements OnClickListener, OnTaskCompleted {
 
@@ -36,7 +42,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			3f);
 	public static final TableLayout.LayoutParams SECOND_IMAGE_LAYOUT_PARAMS = new TableLayout.LayoutParams(
 			TableLayout.LayoutParams.MATCH_PARENT,
-			TableLayout.LayoutParams.MATCH_PARENT);
+			TableLayout.LayoutParams.WRAP_CONTENT);
 	public static final FrameLayout.LayoutParams VIDEO_LAYOUT_PARAMS = new FrameLayout.LayoutParams(
 			FrameLayout.LayoutParams.WRAP_CONTENT,
 			FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -55,9 +61,12 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	//Layout IDs
 	private static final int SCROLLING_LAYOUT_ID = 5001;
 	private static final int MAP_IMAGE_ID = 5002;
+	private static final int MAP_LAYOUT_ID = 5003;
 	
-	ImageProcessor ip;
+	//Stop IDs
+	private static final int MAIN_SCREEN_STOP_ID = -1;
 	
+	float[] mapCoordinates;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +76,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		generateHome();
 		
 	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -94,6 +104,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		LinearLayout mapLayout = new LinearLayout(this);
 		mapLayout.setLayoutParams(CONTENT_LAYOUT_PARAMS);
 		mapLayout.setOrientation(LinearLayout.HORIZONTAL);
+		mapLayout.setId(MAP_LAYOUT_ID);
 		
 		//Button Layout
 		LinearLayout buttonLayout = new LinearLayout(this);
@@ -103,9 +114,9 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		//Map (Maybe pull image from web later)
 		ImageView mapView = new ImageView(this);
 		mapView.setLayoutParams(IMAGE_LAYOUT_PARAMS);
-		mapView.setImageResource(R.drawable.cf1_trace);
 		mapView.setAdjustViewBounds(true);
 		mapView.setId(MAP_IMAGE_ID);
+		mapView.setOnClickListener(this);
 		
 		//Buttons for floors (These could maybe be made more dynamic later)
 		Button b_floor1 = new Button(this);
@@ -159,15 +170,38 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		mainLayout.addView(mainView);
 		setContentView(mainLayout,MAIN_LAYOUT_PARAMS);
 		
+		mapView.post(new Runnable () {
+			@Override
+			public void run() {
+				ImageView mapView = (ImageView) findViewById(MAP_IMAGE_ID);
+				mapView.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), 
+						R.drawable.cf1_trace, mapView.getMeasuredWidth(), mapView.getMeasuredHeight()));
+			}
+		});
+		
 	}
 	
 	private void addStops(){
 	
 		StopRetrievalTask sr = new StopRetrievalTask(this);
-		sr.execute(0);
+		sr.execute(MAIN_SCREEN_STOP_ID);
 
 	}
 	
+//	@Override
+//	protected void onStart()
+//	{
+//		LinearLayout mapLayout = (LinearLayout)findViewById(MAP_LAYOUT_ID);
+//		ImageView mapView = new ImageView(this);
+//		mapView.setLayoutParams(IMAGE_LAYOUT_PARAMS);
+//		mapView.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), 
+//				R.drawable.cf1_trace, mapLayout.getWidth(), mapLayout.getHeight()));
+//		mapView.setAdjustViewBounds(true);
+//		mapView.setId(MAP_IMAGE_ID);
+//		mapLayout.addView(mapView);
+//		super.onStart();
+//	}
+//	
 	public void onClick(View v){
 		
 		int id = v.getId();
@@ -178,6 +212,11 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		if (id == QR_READER_ID){
 			Intent intent = new Intent(this,QRReaderActivitiy.class);
 			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+			startActivity(intent);
+		}
+		if (id == MAP_IMAGE_ID) {
+			Intent intent = new Intent(this,MapViewActivity.class);
+			intent.putExtra("cords",mapCoordinates);
 			startActivity(intent);
 		}
 		else {
@@ -214,14 +253,22 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		buttonLayout.setLayoutParams(CONTENT_LAYOUT_PARAMS);;
 		Log.d("Main","attempting to add stops");
 		//build a button for each stop (set id so we can determine which stop?)
-		for (Stop s : stops){
-			Button Temp = new Button(this);
-			Temp.setLayoutParams(BUTTON_LAYOUT_PARAMS);
-			Log.d("Main",s.getStopName());
-			Temp.setText(s.getStopName());
-			Temp.setId(s.getStopID());
-			Temp.setOnClickListener(this);
-			buttonLayout.addView(Temp);
+		if (stops != null)
+		{
+			mapCoordinates = new float[stops.length * 2];
+			int i = 0;
+			for (Stop s : stops){
+				Button Temp = new Button(this);
+				Temp.setLayoutParams(BUTTON_LAYOUT_PARAMS);
+				Log.d("Main",s.getStopName());
+				Temp.setText(s.getStopName());
+				Temp.setId(s.getStopID());
+				Temp.setOnClickListener(this);
+				buttonLayout.addView(Temp);
+				mapCoordinates[i] = s.getStopPositionX();
+				mapCoordinates[i+1] = s.getStopPositionY();
+				i = i + 2;
+			}
 		}
 		scrollLayout.addView(buttonLayout);
 	}

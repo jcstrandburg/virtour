@@ -4,8 +4,8 @@ public class Stop {
 	
 	private String stopName;
 	private int stopID;
-	private int stopPositionX;
-	private int stopPositionY;
+	private float stopPositionX;
+	private float stopPositionY;
 	private String stopQRIdentifier;
 	private String stopContent;
 	
@@ -15,10 +15,10 @@ public class Stop {
 	public int getStopID() {
 		return stopID;
 	}
-	public int getStopPositionX() {
+	public float getStopPositionX() {
 		return stopPositionX;
 	}
-	public int getStopPositionY() {
+	public float getStopPositionY() {
 		return stopPositionY;
 	}
 	public String getStopQRIdentifier() {
@@ -27,7 +27,7 @@ public class Stop {
 	public String getStopContent() {
 		return stopContent;
 	}
-	public Stop(String StopName, int StopID, int StopPositionX, int StopPositionY, String StopQRIdentifier, String StopContent) {
+	public Stop(String StopName, int StopID, float StopPositionX, float StopPositionY, String StopQRIdentifier, String StopContent) {
 		// TODO Auto-generated constructor stub
 		this.stopName = StopName;
 		this.stopID = StopID;

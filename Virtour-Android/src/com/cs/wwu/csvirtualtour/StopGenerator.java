@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class StopGenerator {
 
-	private static final String STOP_URL = "http://strandburg.us/virtour/api/jsonapi.php?stopid=";
+	private static final String STOP_URL = "http://sw.cs.wwu.edu/~strandj5/csvirtualtour/jsonapi?stopid=";
 	public StopGenerator() {
 		// TODO Auto-generated constructor stub
 	}
@@ -40,7 +40,7 @@ public class StopGenerator {
 			Log.d("StopGenerator","" + e.getMessage());
 		}
 		//stopId 0 is a special case for the main Screen
-		if (stopId == 0) {
+		if (stopId == -1) {
 			return ParseMainScreen(builder.toString());
 		}
 		//All other stops just have a single stop entity
@@ -56,13 +56,13 @@ public class StopGenerator {
 		try {
 			JSONObject jsonObject = new JSONObject(data);
 			JSONArray stops = jsonObject.getJSONObject("result").getJSONArray("StopList");
-			//Log.d("StopGenerator", stops.toString());
+			//Log.d("StopGenerator", stops.toString());/login.php
 			
 			returned = new Stop[stops.length()];
 			
 			for (int i = 0; i < stops.length() ; i++){
 				JSONObject stop = stops.getJSONObject(i);
-				returned[i] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),-1,-1,stop.getString("StopQRIdentifier"),"null");
+				returned[i] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),(float)stop.getDouble("StopX"),(float)stop.getDouble("StopY"),stop.getString("StopQRIdentifier"),"null");
 			}
 			return returned;
 			
@@ -81,7 +81,7 @@ public class StopGenerator {
 			JSONObject stop = jsonObject.getJSONObject("result");
 			//Log.d("StopGenerator", stop.toString());
 			
-			returned[0] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),-1,-1,stop.getString("StopQRIdentifier"),stop.getString("StopContent"));
+			returned[0] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),(float)stop.getDouble("StopX"),(float)stop.getDouble("StopY"),stop.getString("StopQRIdentifier"),stop.getString("StopContent"));
 		} catch (JSONException e) {
 			Log.d("StopGenerator","" + e.getMessage());
 		}

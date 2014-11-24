@@ -31,6 +31,7 @@ public class ImageProcessor {
 		
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
+		options.inPurgeable = true;
 		BitmapFactory.decodeResource(res, resId, options);
 		
 		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
@@ -45,6 +46,7 @@ public class ImageProcessor {
 		
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
+		options.inPurgeable = true;
 		options.outHeight = bit.getHeight();
 		options.outWidth = bit.getWidth();
 		

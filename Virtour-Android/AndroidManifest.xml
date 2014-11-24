@@ -38,6 +38,14 @@
             android:name="com.cs.wwu.csvirtualtour.QRReaderActivitiy"
             android:label="@string/title_activity_qr" >
         </activity>
+        <activity
+            android:name="com.cs.wwu.csvirtualtour.VideoPlayerActivity"
+            android:label="something" >
+        </activity>
+        <activity
+            android:name="com.cs.wwu.csvirtualtour.MapViewActivity"
+            android:label="map" >
+        </activity>
     </application>
 
 </manifest>
