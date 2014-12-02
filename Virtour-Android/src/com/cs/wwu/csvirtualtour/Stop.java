@@ -1,9 +1,10 @@
 package com.cs.wwu.csvirtualtour;
 
-public class Stop {
+public class Stop implements Comparable<Stop> {
 	
 	private String stopName;
 	private int stopID;
+	private int stopOrder;
 	private float stopPositionX;
 	private float stopPositionY;
 	private String stopQRIdentifier;
@@ -14,6 +15,9 @@ public class Stop {
 	}
 	public int getStopID() {
 		return stopID;
+	}
+	public int getStopOrder() {
+		return stopOrder;
 	}
 	public float getStopPositionX() {
 		return stopPositionX;
@@ -27,7 +31,7 @@ public class Stop {
 	public String getStopContent() {
 		return stopContent;
 	}
-	public Stop(String StopName, int StopID, float StopPositionX, float StopPositionY, String StopQRIdentifier, String StopContent) {
+	public Stop(String StopName, int StopID, int StopOrder, float StopPositionX, float StopPositionY, String StopQRIdentifier, String StopContent) {
 		// TODO Auto-generated constructor stub
 		this.stopName = StopName;
 		this.stopID = StopID;
@@ -35,6 +39,13 @@ public class Stop {
 		this.stopPositionY = StopPositionY;
 		this.stopQRIdentifier = StopQRIdentifier;
 		this.stopContent = StopContent;
+		this.stopOrder = StopOrder;
+	}
+	@Override
+	public int compareTo(Stop another) {
+		
+		int compareOrder = another.getStopOrder();
+		return this.stopOrder - compareOrder;
 	}
 
 }

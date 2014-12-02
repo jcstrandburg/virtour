@@ -286,6 +286,12 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		}
 		
 	}
+
+	@Override
+	public void onTaskCompleted(Map[] m) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 

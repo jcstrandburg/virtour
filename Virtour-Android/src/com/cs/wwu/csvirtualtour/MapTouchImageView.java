@@ -1,6 +1,7 @@
 package com.cs.wwu.csvirtualtour;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -9,18 +10,36 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.widget.Toast;
 
-public class MapTouchImageView extends TouchImageView {
+public class MapTouchImageView extends TouchImageView implements OnTouchListener {
 
-	Paint p = new Paint();
-	float[] cords;
-	float borderx;
-	float bordery;
-	public MapTouchImageView(Context context, float[] coordinates) {
+	private Paint p = new Paint();
+	private Stop[] stops;
+	private float borderx;
+	private float bordery;
+	private int mapId, oldId;
+	public MapTouchImageView(Context context) {
 		super(context);
-		cords = coordinates;
 		this.setZoom(1);
+		//this.stops = Globals.getStops();
+		this.setOnTouchListener(this);
 	}
+	
+	public void setStops(Stop[] value)
+	{
+		this.stops = value;
+	}
+	
+	public void setMap(int id)
+	{
+		this.mapId = id;
+	}
+	
+	
 	
 	private Boolean isInView(float xratio, float yratio)
 	{
@@ -96,15 +115,57 @@ public class MapTouchImageView extends TouchImageView {
 		super.onDraw(canvas);
 		p.setColor(Color.RED);
 		p.setStrokeWidth(2);
-		for (int i = 0; i < cords.length; i = i + 2)
+		for (int i = 0; i < stops.length; i++)
 		{
-			if (isInView(cords[i], cords[i+1]))
+			Stop s = stops[i];
+			if (isInView(s.getStopPositionX(), s.getStopPositionY()))
 			{
-				PointF zoomedLocation = getZoomedPosition(cords[i],cords[i+1]);
+				PointF zoomedLocation = getZoomedPosition(s.getStopPositionX(),s.getStopPositionY());
 				
+				p.setColor(Color.BLACK);
+				p.setTextSize(40 - 10 * this.getCurrentZoom());
+				canvas.drawText(s.getStopName(), zoomedLocation.x, zoomedLocation.y -30, p);
+				p.setColor(Color.RED);
 				canvas.drawCircle(zoomedLocation.x, zoomedLocation.y, 10 * this.getCurrentZoom(), p);
 			}
 		}		
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		float x, y;
+		float xMargin = 40, yMargin = 40;
+		//Maybe put up a little preview
+		//Open appropriate stop
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			
+			x = event.getX();
+			y = event.getY();
+//			Toast T =  Toast.makeText(this.getContext(),String.format("You touched me at %f,%f",event.getX(),event.getY()), Toast.LENGTH_LONG);
+//			T.show();
+			
+		for (int i = 0; i < stops.length; i++) 
+		{
+			
+			PointF stopPos = this.getZoomedPosition(stops[i].getStopPositionX(), stops[i].getStopPositionY());
+			
+			if (stopPos.x + xMargin > x && stopPos.x - xMargin < x && stopPos.y + yMargin > y && stopPos.y - yMargin < y)
+			{
+//				Toast To = Toast.makeText(this.getContext(), "YAY", Toast.LENGTH_LONG);
+//				To.show();
+				
+				Intent intent = new Intent(this.getContext(),StopActivity.class);
+				intent.putExtra("StopID", stops[i].getStopID());
+				this.getContext().startActivity(intent);
+			}
+			
+		}
+		
+		}
+		
+		
+		return super.onTouchEvent(event);
+		
 	}
 
 

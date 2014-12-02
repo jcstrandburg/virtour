@@ -2,7 +2,10 @@ package com.cs.wwu.csvirtualtour;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class MapViewActivity extends Activity {
 	
@@ -14,10 +17,11 @@ public class MapViewActivity extends Activity {
 		setContentView(R.layout.activity_map);
 		LinearLayout mainView = (LinearLayout) findViewById(R.id.map_layout);
 		
-		MapTouchImageView mapView = new MapTouchImageView(this,getIntent().getExtras().getFloatArray("cords"));
+		MapTouchImageView mapView = new MapTouchImageView(this);
 		mapView.setLayoutParams(MainActivity.SECOND_IMAGE_LAYOUT_PARAMS);
 		mapView.setId(999);
 		mapView.setImageResource(R.drawable.placeholder);
+		mapView.setStops(Globals.getStops());
 		mapView.post(new Runnable() {
 
 			@Override

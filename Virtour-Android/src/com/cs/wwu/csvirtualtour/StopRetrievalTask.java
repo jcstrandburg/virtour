@@ -29,5 +29,7 @@ public class StopRetrievalTask extends AsyncTask<Integer, Void, Stop[]> {
 		
 		listener.onTaskCompleted(Result);
 	}
+	
+
 
 }

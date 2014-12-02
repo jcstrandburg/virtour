@@ -39,7 +39,7 @@ public class StopGenerator {
 		} catch (Exception e) {
 			Log.d("StopGenerator","" + e.getMessage());
 		}
-		//stopId 0 is a special case for the main Screen
+		//stopId -1 is a special case for the main Screen
 		if (stopId == -1) {
 			return ParseMainScreen(builder.toString());
 		}
@@ -62,7 +62,7 @@ public class StopGenerator {
 			
 			for (int i = 0; i < stops.length() ; i++){
 				JSONObject stop = stops.getJSONObject(i);
-				returned[i] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),(float)stop.getDouble("StopX"),(float)stop.getDouble("StopY"),stop.getString("StopQRIdentifier"),"null");
+				returned[i] = new Stop(stop.getString("StopName"), stop.getInt("StopID"), stop.getInt("StopOrder"),(float)stop.getDouble("StopX"),(float)stop.getDouble("StopY"),stop.getString("StopQRIdentifier"),"null");
 			}
 			return returned;
 			
@@ -81,7 +81,8 @@ public class StopGenerator {
 			JSONObject stop = jsonObject.getJSONObject("result");
 			//Log.d("StopGenerator", stop.toString());
 			
-			returned[0] = new Stop(stop.getString("StopName"),stop.getInt("StopID"),(float)stop.getDouble("StopX"),(float)stop.getDouble("StopY"),stop.getString("StopQRIdentifier"),stop.getString("StopContent"));
+			returned[0] = new Stop(stop.getString("StopName"), stop.getInt("StopID"), stop.getInt("StopOrder"), (float)stop.getDouble("StopX"), 
+										(float)stop.getDouble("StopY"), stop.getString("StopQRIdentifier"), stop.getString("StopContent"));
 		} catch (JSONException e) {
 			Log.d("StopGenerator","" + e.getMessage());
 		}
