@@ -2,7 +2,7 @@
 session_start();
 include '../phpfunction.php';
 
-if( !in_array($_SESSION['user'], array(1,2))) {
+if( $_SESSION['user'] == 0) {
 	header("Location: ../index.php");
 }
 

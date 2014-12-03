@@ -36,7 +36,7 @@ abstract class DataAPI {
 			}
 			
 			else if ( $this->stopid == -1 ) {
-				$query = "Select StopID, StopName, StopOrder, StopX, StopY, StopQRIdentifier FROM Stops";
+				$query = "Select StopID, StopName, StopOrder, StopX, StopY, MapID, StopQRIdentifier FROM Stops";
 				//$stmt = $db->query( $query);
 				$stmt = mysqli_query($link, $query);
 				//$rows = $stmt->fetchAll( PDO::FETCH_ASSOC);
