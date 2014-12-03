@@ -3,13 +3,18 @@ session_start();
 include 'phpfunction.php';
 
 $did = $_GET['did'];	//delete id
+$aid = $_GET['aid'];	//active id
+$active = $_GET['active'];
 
-if($_SESSION['user'] == 1 || $_SESSION['user'] == 2) {
+if($_SESSION['user'] != 0) {
 	
 	//remove selected stop
 	if (!empty($did)) {
-		echo "Deleting";
-		mysqli_query($link, "delete from Stops where StopID = '$did)'");
+		mysqli_query($link, "delete from Stops where StopID = '$did'");
+	}
+	
+	if(!empty($aid)) {
+		mysqli_query($link, "update Stops set Active = '" . $active . "' where StopID = '" . $aid . "'");
 	}
 	
 	//select all the remaining stops
@@ -19,15 +24,26 @@ if($_SESSION['user'] == 1 || $_SESSION['user'] == 2) {
 	if(mysqli_num_rows($stops) != 0) {
 		$table = '';
 		while($row = mysqli_fetch_array($stops)) {
-			$table = $table . "<tr><td>{$row['StopID']}</td><td>" . $row['StopName'] . "</td>
-			<td>" . $row['StopOrder'] . "</td>
-			<td><a href='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CSVTour://" . $row['StopID'] . "' target='_blank'>Click for QR Code</a></td>
-			<td><a href='stopinfo.php?eid=" . $row['StopID'] . "'>Edit</a>/<a href='stops.php?did=" . $row['StopID'] . "'>Delete</a></td></tr>";
+			if($row['Active'] == "yes") {
+				$table = $table . "<tr><td>" . $row['StopName'] . "</td>
+				<td>" . $row['StopOrder'] . "</td>
+				<td><a href='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CSVTour://" . $row['StopID'] . "' target='_blank'>Click for QR Code</a></td>
+				<td><a href='stopinfo.php?eid=" . $row['StopID'] . "'>Edit</a>/<a href='stops.php?did=" . $row['StopID'] . "'>Delete</a>/
+				<a href='stops.php?aid=" . $row['StopID'] . "&active=no'>Deactivate</a></td></tr>";
+			}
+			else {
+				$table = $table . "<tr><td>" . $row['StopName'] . "</td>
+				<td>" . $row['StopOrder'] . "</td>
+				<td>None</td>
+				<td><a href='stops.php?aid=" . $row['StopID'] . "&active=yes'>Activate</a></td></tr>";
+			}
 		}
 	}
 	
 	if($_SESSION['user'] == 1) {
 		$more = "<a href='newstop.php'>Add New Stop</a>
+			</br>
+			<a href='admin.php'>Administrative Functions</a>
 			</br>";
 	}
 }
@@ -40,7 +56,7 @@ else {
 <?php echo $header?>
 	<h1>List Of Stops</h1>
 	<table>
-		<th>Stop ID</th><th>Stop Name</th><th>Stop Order</th><th>QR Code</th><th>Modify Stop</th>
+		<th>Stop Name</th><th>Stop Order</th><th>QR Code</th><th>Modify Stop</th>
 		<?php echo $table?>
 	</table>
 <?php echo footer($more)?>
