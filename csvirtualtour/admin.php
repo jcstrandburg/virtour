@@ -15,6 +15,7 @@ if($_SESSION['user'] != 0) {
 	}
 		$content = $content . '
 			<h2><a href="media/manage.php">Manage Media Files</a></h2>			
+			<h2><a href="maps/manage.php">Manage Maps</a></h2>			
 		';
 }
 else {

@@ -35,7 +35,7 @@ abstract class DataAPI {
 				$this->result = $row;
 			}
 			
-			else if ( $this->stopid == 0 ) {
+			else if ( $this->stopid == -1 ) {
 				$query = "Select StopID, StopName, StopOrder, StopX, StopY, StopQRIdentifier FROM Stops";
 				//$stmt = $db->query( $query);
 				$stmt = mysqli_query($link, $query);

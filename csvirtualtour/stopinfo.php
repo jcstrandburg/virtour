@@ -22,8 +22,12 @@ if($_SESSION['user'] != 0) {
 		$stopname = $row['StopName'];
 		$stoporder = $row['StopOrder'];
 		$stopcontent = $row['StopContent'];
+		$stopx = $row['StopX'];
+		$stopy = $row['StopY'];
+        $mapid = $row['MapID'];
 	}
 	else {
+        var_dump($_POST);
 		$query = "update Stops set StopName = '$stopname' StopOrder = '$stoporder' StopContent = '$stopcontent' where StopID = '$stopid'";    
 		
 		mysqli_query($link, $query);
@@ -67,8 +71,11 @@ $(document).ready( function() {
 	$('#map-selector').change(
 		function(event) {
 			var url = $(this).val();
+            
+            var id = $(this).val();
+            var url = "maps/"+$(this).find(":selected").data("url");
 			$('#clickymap').attr('src', url);
-			$('input[name=mapurl]').val(url);
+			$('input[name=mapid]').val(id);
 		}
 	);
 });
@@ -81,11 +88,18 @@ $(document).ready( function() {
 
 	<div class='mapSelector'>
 		<h3>Select Map</h3>
+        <?php
+		$maps = get_map_list();?>
 		<select id='map-selector'>
 			<?php
-			$maps = get_map_list();
 			foreach ($maps as $map) {
-				echo "<option value='$map'>$map</option>";
+                if ( $map['id'] == $mapid) {
+                    $selectedString = "selected";
+                }
+                else {
+                    $selectedString = "";
+                }
+				echo "<option value='{$map['id']}' data-url='{$map['url']}' $selectedString>{$map['desc']}</option>";
 			}
 			?>
 		</select>
@@ -95,7 +109,7 @@ $(document).ready( function() {
 	<div class='mapWrapperWrapper'>
 		<div class='mapWrapper'>
 			<img id='pin' src='pin.gif'/>
-			<img id="clickymap" src="maps/cf1.png">
+			<img id="clickymap" src="maps/<?php echo $maps[$mapid]['url'];?>">
 		</div>
 	</div>
 	<hr>	
@@ -103,7 +117,8 @@ $(document).ready( function() {
 	<input type="hidden" name="stopcontent">
 	<input type="hidden" name="stopx" value="0.0">
 	<input type="hidden" name="stopy" value="0.0">
-	<input type="hidden" name="mapurl" value="">
+	<input type="hidden" name="mapid" value="<?php echo $mapid;?>">
+
 	<input type="hidden" name="sent" value="<?php echo $stopid?>">
 </form>
 <button onClick='framework.addComponent(TextComponent)'>Add Text</button>

@@ -40,26 +40,19 @@ function footer($more) {
 	return $html;
 }
 
-function get_map_list($path = 'maps/') {
-	$extensions = array('jpg', 'png', 'gif');
-	
-	$matches = array();
-	$files = scandir($path);
-	
-	foreach ($files as $file) {
-		$file = $path.$file;
-		if (!is_file($file)) {
-			continue;
-		}
-		$extn = pathinfo($file, PATHINFO_EXTENSION);
-		if ( in_array($extn, $extensions)) {
-			$matches[] = $file;
-		}
-		else {
-		}
-	}
-	
-	return $matches;
+function get_map_list() {
+    global $link;
+    $query = "SELECT * FROM maps";
+    $result = mysqli_query($link, $query);
+
+    $maps = array();
+    if ($result) {
+        while ($row = mysqli_fetch_array($result)) {
+
+            $maps[$row["id"]] = $row;
+        }
+    }
+    return $maps;
 }
 
 function cleanString($link, $input) {
@@ -79,9 +72,19 @@ function checkURL($url) {
 	}
 }
 
-$link = mysqli_connect("mysql.cs.wwu.edu", "vut3", "", "vut3")
+$dbname = 'mysql:host=localhost;dbname=strandbu_virtour;charset=utf8';
+$dbuser = 'strandbu_virtour';
+$dbpass = 'g3pWI6WNDQDd';
+
+$link = mysqli_connect("strandburg.us", "strandbu_virtour", "g3pWI6WNDQDd", "strandbu_virtour")
+    or die("Error " . mysqli_error($link));
+    
+$writedb = mysqli_connect("strandburg.us", "strandbu_virtour", "g3pWI6WNDQDd", "strandbu_virtour")
+    or die("Error " . mysqli_error($link));
+
+/*$link = mysqli_connect("mysql.cs.wwu.edu", "vut3", "", "vut3")
     or die("Error " . mysqli_error($link));
 	
 $writedb = mysqli_connect("mysql.cs.wwu.edu", "vut3_writer", "", "vut3")
-    or die("Error " . mysqli_error($link));
+    or die("Error " . mysqli_error($link));*/
 ?>

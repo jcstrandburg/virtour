@@ -9,6 +9,7 @@ if (isset($_POST['sent'])) {
 	$stopcontent = $_POST['stopcontent'];
 	$stopx = $_POST['stopx'];
 	$stopy = $_POST['stopy'];
+    $mapid = $_POST['mapid'];
 }
 
 $more = "<a href='stops.php'>List Of Stops</a>
@@ -16,8 +17,8 @@ $more = "<a href='stops.php'>List Of Stops</a>
 
 if($_SESSION['user'] == 1 || $_SESSION['user'] == 2) {
 	if(!empty($sent)) {
-		$query = "insert into Stops (StopName, StopContent, StopOrder, StopX, StopY) values 
-			('" . $stopname . "', '" . $stopcontent. "', '" . $stoporder . "', '" . $stopx . "', '" . $stopy . "')";
+		$query = "insert into Stops (StopName, StopContent, StopOrder, StopX, StopY, MapID) values 
+			('" . $stopname . "', '" . $stopcontent. "', '" . $stoporder . "', '" . $stopx . "', '" . $stopy . "', '".$mapid."')";
 		mysqli_query($writedb, $query);
 		
 		mysqli_query($writedb, "update Stops set StopQRIdentifier = StopID where StopName = '" . $stopname . "'");
@@ -62,13 +63,16 @@ $maps = get_map_list();
 			}	
 		);		
 		
-		$('#map-selector').change(
-			function(event) {
-				var url = $(this).val();
-				$('#clickymap').attr('src', url);
-				$('input[name=mapurl]').val(url);
-			}
-		);		
+        $('#map-selector').change(
+	        function(event) {
+		        var url = $(this).val();
+                
+                var id = $(this).val();
+                var url = "maps/"+$(this).find(":selected").data("url");
+		        $('#clickymap').attr('src', url);
+		        $('input[name=mapid]').val(id);
+	        }
+        );	
 	});
 </script>
 
@@ -85,8 +89,18 @@ $maps = get_map_list();
 		<select id='map-selector'>
 			<?php
 			$maps = get_map_list();
+            $counter = 0;
 			foreach ($maps as $map) {
-				echo "<option value='$map'>$map</option>";
+                if ($counter == 0) {
+                    $selected = "selected";
+                    $firstmap = $map;
+                }
+                else {
+                    $selected = "";
+                }
+                ++$counter;
+				echo "<option $selected value='{$map['id']}' data-url='{$map['url']}'>{$map['desc']}</option>";
+
 			}
 			?>
 		</select>
@@ -96,7 +110,7 @@ $maps = get_map_list();
 	<div class='mapWrapperWrapper'>
 		<div class='mapWrapper'>
 			<img id='pin' src='pin.gif'/>
-			<img id="clickymap" src="<?php echo $maps[0];?>">
+			<img id="clickymap" src="<?php echo "maps/".$firstmap['url'];?>">
 		</div>
 	</div>
 	<hr>	
@@ -104,8 +118,7 @@ $maps = get_map_list();
 	<h3>Stop Content</h3>
 	<input type="hidden" name="stopx" value="0.0">
 	<input type="hidden" name="stopy" value="0.0">
-	<input type="hidden" name="mapindex" value="0">	
-	<input type="hidden" name="mapurl" value="<?php echo $maps[0];?>">	
+	<input type="hidden" name="mapid" value="<?php echo $firstmap['id'];?>">	
 	<input type="hidden" name="stopcontent">
 	<input type="hidden" name="sent" value="sent">
 </form>
