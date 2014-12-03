@@ -231,30 +231,16 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			startActivity(intent);
 		}
 		if (id == MAP_IMAGE_ID) {
+			ImageView map = (ImageView) findViewById(MAP_IMAGE_ID);
 			Intent intent = new Intent(this,MapViewActivity.class);
+			intent.putExtra("mapId",map.getContentDescription());
 			startActivity(intent);
 		}
-		else {
-			//If a map button was clicked, change the map, 
-			//otherwise open a stop activity with the specified stop
-			if (id == FIRST_FLOOR_ID){
-				ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
-				//((BitmapDrawable)map.getDrawable()).getBitmap().recycle();
-				map.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), 
-						R.drawable.cf1_trace, map.getWidth(), map.getHeight()));
-			}
-			else if (id == FOURTH_FLOOR_ID){
-				ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
-				((BitmapDrawable)map.getDrawable()).getBitmap().recycle();
-				map.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), 
-						R.drawable.cf4_trace, map.getWidth(), map.getHeight()));
-				
-			}
-			else{
-				Intent intent = new Intent(this,StopActivity.class);
-				intent.putExtra("StopID", id);
-				startActivity(intent);
-			}
+		else
+		{
+			Intent intent = new Intent(this,StopActivity.class);
+			intent.putExtra("StopID", id);
+			startActivity(intent);
 		}
 		
 	}
@@ -313,6 +299,8 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 				
 				Map m = msa.getItem(position);
 				ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
+				map.setAlpha(.3f);
+				map.setContentDescription(Integer.toString(position));
 				ImageRetrievalTask irt = new ImageRetrievalTask(map);
 				irt.execute(Globals.getMaps()[position].getMapUrl());
 				
@@ -323,18 +311,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 				// TODO Auto-generated method stub
 				
 			}
-		});
-		
-		//Put First Map in imageview
-		mapView.post(new Runnable () {
-			@Override
-			public void run() {
-				ImageView mapView = (ImageView) findViewById(MAP_IMAGE_ID);
-				mapView.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), 
-						R.drawable.cf1_trace, mapView.getMeasuredWidth(), mapView.getMeasuredHeight()));
-			}
-		});
-		
+		});	
 		ButtonLayout.addView(mapSpinner);
 	}
 

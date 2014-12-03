@@ -32,6 +32,7 @@ public class ImageRetrievalTask extends AsyncTask<String, Void, Bitmap> {
 	}
 	
 	protected void onPostExecute(Bitmap result) {
+		Image.setAlpha(1f);
 		Image.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(result, Image.getWidth(), Image.getHeight()));
 	}
 

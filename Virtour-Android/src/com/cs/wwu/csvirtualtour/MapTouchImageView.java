@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.Toast;
+import android.graphics.*;
 
 public class MapTouchImageView extends TouchImageView implements OnTouchListener {
 
@@ -21,22 +22,18 @@ public class MapTouchImageView extends TouchImageView implements OnTouchListener
 	private Stop[] stops;
 	private float borderx;
 	private float bordery;
-	private int mapId, oldId;
-	public MapTouchImageView(Context context) {
+	private int mapId;
+	public MapTouchImageView(Context context, int mapId) {
 		super(context);
 		this.setZoom(1);
 		//this.stops = Globals.getStops();
+		this.mapId = mapId;
 		this.setOnTouchListener(this);
 	}
 	
 	public void setStops(Stop[] value)
 	{
 		this.stops = value;
-	}
-	
-	public void setMap(int id)
-	{
-		this.mapId = id;
 	}
 	
 	
@@ -120,11 +117,27 @@ public class MapTouchImageView extends TouchImageView implements OnTouchListener
 			Stop s = stops[i];
 			if (isInView(s.getStopPositionX(), s.getStopPositionY()))
 			{
+				p.setStyle(Paint.Style.FILL_AND_STROKE);
 				PointF zoomedLocation = getZoomedPosition(s.getStopPositionX(),s.getStopPositionY());
-				
+				p.setTextSize(40 + 10 * this.getCurrentZoom());
+				Rect Bounds = new Rect();
+				p.getTextBounds(s.getStopName(),0,s.getStopName().length(), Bounds);
+				float length = p.measureText(s.getStopName());
+				float height = Bounds.bottom - Bounds.top;
+				Bounds.top = (int)(zoomedLocation.y - height - 30 );
+				Bounds.bottom = Bounds.top + (int)height + 10;
+				Bounds.left = (int)(zoomedLocation.x - length /2 - 10);
+				Bounds.right = (int)(Bounds.left + length + 10);
+				//Draw background rectangle
+				p.setColor(Color.WHITE);
+				canvas.drawRect(Bounds,p);
 				p.setColor(Color.BLACK);
-				p.setTextSize(40 - 10 * this.getCurrentZoom());
-				canvas.drawText(s.getStopName(), zoomedLocation.x, zoomedLocation.y -30, p);
+				p.setStyle(Paint.Style.STROKE);
+				canvas.drawRect(Bounds,p);
+				//Draw Text
+				p.setStyle(Paint.Style.FILL_AND_STROKE);
+				p.setColor(Color.BLACK);
+				canvas.drawText(s.getStopName(), zoomedLocation.x - length/2, zoomedLocation.y -30, p);
 				p.setColor(Color.RED);
 				canvas.drawCircle(zoomedLocation.x, zoomedLocation.y, 10 * this.getCurrentZoom(), p);
 			}
