@@ -10,6 +10,9 @@ if ( isset($_POST['sent'])) {
 	$stopname = $_POST['stopname'];
 	$stoporder = $_POST['stoporder'];
 	$stopcontent = $_POST['stopcontent'];
+	$stopx = $_POST['stopx'];
+	$stopy = $_POST['stopy'];
+	$mapid = $_POST['mapid'];
 }
 	
 $more = "<a href='stops.php'>List Of Stops</a>
@@ -27,10 +30,9 @@ if($_SESSION['user'] != 0) {
         $mapid = $row['MapID'];
 	}
 	else {
-        var_dump($_POST);
-		$query = "update Stops set StopName = '$stopname' StopOrder = '$stoporder' StopContent = '$stopcontent' where StopID = '$stopid'";    
-		
+		$query = "update Stops set `StopName` = '$stopname', `StopOrder` = '$stoporder', `StopContent` = '$stopcontent', `StopX` = '$stopx', `StopY`='$stopy', `MapID`='$mapid'  where `StopID` = '$stopid'";
 		mysqli_query($link, $query);
+    	header("Location:stops.php");
 	}
 }
 else {
