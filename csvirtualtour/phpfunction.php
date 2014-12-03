@@ -1,5 +1,9 @@
 <?php
 
+
+$salt = "whyareweheredonotaskthatquestionagain";
+$qrCodeSite = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CSVTour://";
+
 function make_header($path = './') {
 	ob_start();
 	?>
@@ -58,9 +62,26 @@ function get_map_list($path = 'maps/') {
 	return $matches;
 }
 
-$link = mysqli_connect("mysql.cs.wwu.edu", "vut3", "6dSHnxgTZx", "vut3")
+function cleanString($link, $input) {
+   //remove html tags
+   $input = strip_tags($input);
+   
+   //Escape special characters
+   $input = mysqli_real_escape_string($link, $input);
+   
+   return $input;
+}
+
+function checkURL($url) {
+	$response = @get_headers($url);
+	if($response == FALSE) {
+		header("Location:newqr.php");
+	}
+}
+
+$link = mysqli_connect("mysql.cs.wwu.edu", "vut3", "", "vut3")
     or die("Error " . mysqli_error($link));
 	
-$writedb = mysqli_connect("mysql.cs.wwu.edu", "vut3_writer", "YD2CzfNi", "vut3")
+$writedb = mysqli_connect("mysql.cs.wwu.edu", "vut3_writer", "", "vut3")
     or die("Error " . mysqli_error($link));
 ?>

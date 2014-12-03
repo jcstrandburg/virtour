@@ -2,7 +2,7 @@
 session_start();
 include '../phpfunction.php';
 
-if( !in_array($_SESSION['user'], array(1,2))) {
+if( in_array($_SESSION['user'], array(0))) {
 	header("Location: ../index.php");
 }
 
@@ -256,5 +256,7 @@ echo $upload_limit."<br>";*/
 </div>
 
 <?php
-echo footer('');
+$more = "<a href='../admin.php'>Administrative Functions</a>
+			</br>";
+echo footer($more);
 ?>

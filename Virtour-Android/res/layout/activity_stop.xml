@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_stop"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true" >
 
-    <LinearLayout
+   <LinearLayout
+        android:id = "@+id/layout_stop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
@@ -15,21 +17,7 @@
             android:layout_height="0dp"
             android:adjustViewBounds="true"
             android:layout_weight="1"
-            android:contentDescription="@string/map"
-            android:src="@drawable/cf420" />
-
-        <TextView
-            android:id="@+id/txt_stop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/cf420"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:id="@+id/list_stop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:contentDescription="@string/map">
+        </ImageView>
     </LinearLayout>
-
 </ScrollView>

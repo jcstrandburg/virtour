@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 public class ImageRetrievalTask extends AsyncTask<String, Void, Bitmap> {
@@ -32,7 +33,9 @@ public class ImageRetrievalTask extends AsyncTask<String, Void, Bitmap> {
 	}
 	
 	protected void onPostExecute(Bitmap result) {
+		Image.setAlpha(1f);
 		Image.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(result, Image.getWidth(), Image.getHeight()));
+		Image.setVisibility(View.VISIBLE);
 	}
 
 }

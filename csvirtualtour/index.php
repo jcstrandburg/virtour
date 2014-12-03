@@ -4,8 +4,8 @@ include 'phpfunction.php';
 
 $_SESSION['user'] = 0;
 $click = $_POST['click'];
-$username = $_POST['username'];
-$password = $_POST['password'];
+$username = cleanString($link, $_POST['username']);
+$password = cleanString($link, $_POST['password']);
 
 if(!empty($click)) {
 
@@ -18,17 +18,18 @@ if(!empty($click)) {
 		
 		//go through all users
 		while($row = mysqli_fetch_array($result)) {
-			if(strcmp($username, $row['username']) == 0 && strcmp($password, $row['password']) == 0) {
+			if(strcmp($username, $row['username']) == 0 && strcmp(crypt($password, $salt), $row['password']) == 0) {
 				
 				//super user
 				if(strcmp($username, 'admin') == 0) {
-					$_SESSION['user'] = 1;
+					$_SESSION['user'] = $row['userid'];
 					header("Location: admin.php");
 				}
 				
 				//staff
 				else {
-					$_SESSION['user'] = 2;
+					$_SESSION['user'] = $row['userid'];
+					header("Location: admin.php");
 				}
 			}
 		}
