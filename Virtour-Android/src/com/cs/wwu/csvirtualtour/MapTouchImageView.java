@@ -23,11 +23,15 @@ public class MapTouchImageView extends TouchImageView implements OnTouchListener
 	private float borderx;
 	private float bordery;
 	private int mapId;
+	private Rect bounds;
+	
 	public MapTouchImageView(Context context, int mapId) {
 		super(context);
 		this.setZoom(1);
+		this.setMaxZoom(5);
 		//this.stops = Globals.getStops();
 		this.mapId = mapId;
+		this.bounds = new Rect();
 		this.setOnTouchListener(this);
 	}
 	
@@ -78,7 +82,6 @@ public class MapTouchImageView extends TouchImageView implements OnTouchListener
 		PointF returned = new PointF(0,0);
 		float xpos, ypos;
 		float imageWidth, imageHeight;
-		float zoomedtop, zoomedleft, zoomedbottom, zoomedright;
 		
 		//get offsets of actual image in ImageView
 		Matrix imageMatrix = this.getImageMatrix();
@@ -115,31 +118,30 @@ public class MapTouchImageView extends TouchImageView implements OnTouchListener
 		for (int i = 0; i < stops.length; i++)
 		{
 			Stop s = stops[i];
-			if (isInView(s.getStopPositionX(), s.getStopPositionY()))
+			if (this.mapId == s.getStopMapID() && isInView(s.getStopPositionX(), s.getStopPositionY()))
 			{
 				p.setStyle(Paint.Style.FILL_AND_STROKE);
 				PointF zoomedLocation = getZoomedPosition(s.getStopPositionX(),s.getStopPositionY());
-				p.setTextSize(40 + 10 * this.getCurrentZoom());
-				Rect Bounds = new Rect();
-				p.getTextBounds(s.getStopName(),0,s.getStopName().length(), Bounds);
+				p.setTextSize((this.getMeasuredHeight() / 50) + 10 * this.getCurrentZoom());
+				p.getTextBounds(s.getStopName(),0,s.getStopName().length(), bounds);
 				float length = p.measureText(s.getStopName());
-				float height = Bounds.bottom - Bounds.top;
-				Bounds.top = (int)(zoomedLocation.y - height - 30 );
-				Bounds.bottom = Bounds.top + (int)height + 10;
-				Bounds.left = (int)(zoomedLocation.x - length /2 - 10);
-				Bounds.right = (int)(Bounds.left + length + 10);
+				float height = bounds.bottom - bounds.top;
+				bounds.top = (int)(zoomedLocation.y - height - ((this.getMeasuredHeight() /100) * this.getCurrentZoom()));
+				bounds.bottom = bounds.top + (int)height + (int)(3 * this.getCurrentZoom());
+				bounds.left = (int)(zoomedLocation.x - length /2 - (int)(3 * this.getCurrentZoom()));
+				bounds.right = (int)(bounds.left + length + (int)(3 * this.getCurrentZoom()));
 				//Draw background rectangle
 				p.setColor(Color.WHITE);
-				canvas.drawRect(Bounds,p);
+				canvas.drawRect(bounds,p);
 				p.setColor(Color.BLACK);
 				p.setStyle(Paint.Style.STROKE);
-				canvas.drawRect(Bounds,p);
+				canvas.drawRect(bounds,p);
 				//Draw Text
 				p.setStyle(Paint.Style.FILL_AND_STROKE);
 				p.setColor(Color.BLACK);
-				canvas.drawText(s.getStopName(), zoomedLocation.x - length/2, zoomedLocation.y -30, p);
+				canvas.drawText(s.getStopName(), zoomedLocation.x - length/2, zoomedLocation.y - ((this.getMeasuredHeight() /100) * this.getCurrentZoom()), p);
 				p.setColor(Color.RED);
-				canvas.drawCircle(zoomedLocation.x, zoomedLocation.y, 10 * this.getCurrentZoom(), p);
+				canvas.drawCircle(zoomedLocation.x, zoomedLocation.y, (this.getMeasuredHeight() / 100) * this.getCurrentZoom(), p);
 			}
 		}		
 	}
@@ -147,7 +149,7 @@ public class MapTouchImageView extends TouchImageView implements OnTouchListener
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		float x, y;
-		float xMargin = 40, yMargin = 40;
+		float xMargin = this.getMeasuredWidth() / 50, yMargin = this.getMeasuredHeight() / 50;
 		//Maybe put up a little preview
 		//Open appropriate stop
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {

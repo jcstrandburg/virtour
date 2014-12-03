@@ -1,5 +1,7 @@
 package com.cs.wwu.csvirtualtour;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,14 +11,17 @@ import android.widget.ImageView;
 
 public class MapImageView extends ImageView {
 
-	float markX, markY;
-	Paint p = new Paint();
+	private Paint p = new Paint();
+	private  ArrayList<Float> mapMarks;
 	//Paint p = new Paint();
-	public MapImageView(Context context,float markx, float marky) {
+	
+	public void setMapMarks(ArrayList<Float> value)
+	{
+		this.mapMarks = value;
+	}
+	
+	public MapImageView(Context context) {
 		super(context);
-		this.markX = markx;
-		this.markY = marky;
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -29,7 +34,12 @@ public class MapImageView extends ImageView {
 		matrix.getValues(values);
 		float x = values[2];
 		float y = values[5];
-		canvas.drawCircle(x + this.getMeasuredWidth() * markX,y + this.getMeasuredHeight() * markY, 10, p);
+		for (int i = 0; i < mapMarks.size(); i = i + 2)
+		{
+			float markX = mapMarks.get(i);
+			float markY = mapMarks.get(i+1);
+			canvas.drawCircle(x + this.getMeasuredWidth() * markX,y + this.getMeasuredHeight() * markY, (this.getMeasuredHeight() / 50), p);
+		}
 		
 		
 	}

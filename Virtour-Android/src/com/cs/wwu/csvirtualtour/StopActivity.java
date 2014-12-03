@@ -1,5 +1,7 @@
 package com.cs.wwu.csvirtualtour;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -216,15 +218,33 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	}
 	
 	@SuppressLint("NewApi")
-	private FrameLayout GenerateMarkedMap(float markx, float marky)
+	private FrameLayout GenerateMarkedMap(float markx, float marky, int MapId)
 	{
+		ArrayList<Float> marks = new ArrayList<Float>();
+		marks.add(markx);
+		marks.add(marky);
 		FrameLayout mapLayout = new FrameLayout(this);
 		mapLayout.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
 		//Put map in layout
-		MapImageView mapView = new MapImageView(this,markx,marky);
+		MapImageView mapView = new MapImageView(this);
+		mapView.setMapMarks(marks);
 		mapView.setLayoutParams(MainActivity.SECOND_IMAGE_LAYOUT_PARAMS);
 		mapView.setId(MAP_IMAGE_ID);
 		mapView.setImageResource(R.drawable.placeholder);
+		mapView.setVisibility(View.INVISIBLE);
+		
+		Map map = null;
+		
+		for (Map m : Globals.getMaps())
+		{
+			if (m.getMapId() == MapId)
+			{
+				map = m;
+				break;
+			}
+		}
+		
+		final Map thisMap = map;
 		//mapView.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), R.drawable.cf4_trace, mapView.getWidth(), mapView.getHeight()));
 		
 		mapView.post(new Runnable(){
@@ -232,7 +252,8 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 			@Override
 			public void run() {
 				MapImageView map = (MapImageView) findViewById(MAP_IMAGE_ID);
-				map.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), R.drawable.cf4_trace, map.getMeasuredWidth(), map.getMeasuredHeight()));
+				ImageRetrievalTask irt = new ImageRetrievalTask(map);
+				irt.execute(thisMap.getMapUrl());
 				
 			}
 			
@@ -266,7 +287,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		}
 		
 		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
-		MainLayout.addView(GenerateMarkedMap(thisStop.getStopPositionX(),thisStop.getStopPositionY()));
+		MainLayout.addView(GenerateMarkedMap(thisStop.getStopPositionX(),thisStop.getStopPositionY(),thisStop.getStopMapID()));
 		setTitle(thisStop.getStopName());
 		BuildStopContent(stopContent);
 		

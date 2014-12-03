@@ -4,6 +4,7 @@ public class Stop implements Comparable<Stop> {
 	
 	private String stopName;
 	private int stopID;
+	private int stopMapID;
 	private int stopOrder;
 	private float stopPositionX;
 	private float stopPositionY;
@@ -15,6 +16,9 @@ public class Stop implements Comparable<Stop> {
 	}
 	public int getStopID() {
 		return stopID;
+	}
+	public int getStopMapID() {
+		return stopMapID;
 	}
 	public int getStopOrder() {
 		return stopOrder;
@@ -31,7 +35,7 @@ public class Stop implements Comparable<Stop> {
 	public String getStopContent() {
 		return stopContent;
 	}
-	public Stop(String StopName, int StopID, int StopOrder, float StopPositionX, float StopPositionY, String StopQRIdentifier, String StopContent) {
+	public Stop(String StopName, int StopID, int StopOrder, float StopPositionX, float StopPositionY, String StopQRIdentifier, String StopContent, int StopMapId) {
 		// TODO Auto-generated constructor stub
 		this.stopName = StopName;
 		this.stopID = StopID;
@@ -40,6 +44,7 @@ public class Stop implements Comparable<Stop> {
 		this.stopQRIdentifier = StopQRIdentifier;
 		this.stopContent = StopContent;
 		this.stopOrder = StopOrder;
+		this.stopMapID = StopMapId;
 	}
 	@Override
 	public int compareTo(Stop another) {

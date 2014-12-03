@@ -73,7 +73,8 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	//Stop IDs
 	private static final int MAIN_SCREEN_STOP_ID = -1;
 	
-	//float[] mapCoordinates;
+	//Current Map ID
+	int currentMapId = -1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +122,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		buttonLayout.setId(MAP_BUTTON_LAYOUT_ID);
 		
 		//Map (Maybe pull image from web later)
-		ImageView mapView = new ImageView(this);
+		MapImageView mapView = new MapImageView(this);
 		mapView.setLayoutParams(IMAGE_LAYOUT_PARAMS);
 		mapView.setAdjustViewBounds(true);
 		mapView.setId(MAP_IMAGE_ID);
@@ -169,9 +170,9 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		mapLayout.addView(buttonLayout);
 		
 		scrollLayout.addView(mapLayout);
+		scrollLayout.addView(b_scanner);
 		scrollLayout.addView(welcomeTitle);
 		scrollLayout.addView(welcomeMessage);
-		scrollLayout.addView(b_scanner);
 		//scrollLayout.addView(mapLayout);
 		//Add Buttons to View 
 		addStops();
@@ -232,8 +233,10 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		}
 		if (id == MAP_IMAGE_ID) {
 			ImageView map = (ImageView) findViewById(MAP_IMAGE_ID);
-			Intent intent = new Intent(this,MapViewActivity.class);
-			intent.putExtra("mapId",map.getContentDescription());
+			Intent intent = new Intent(this,ImageViewActivity.class);
+			intent.putExtra("values",map.getContentDescription());
+			//intent.putExtra("imageUrl", value)
+			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(intent);
 		}
 		else
@@ -278,7 +281,6 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	
 	public void onTaskCompleted(Map[] maps)
 	{
-	
 		//Retrieve Views
 		LinearLayout MapLayout = (LinearLayout) findViewById(MAP_LAYOUT_ID);
 		LinearLayout ButtonLayout = (LinearLayout) findViewById(MAP_BUTTON_LAYOUT_ID);
@@ -298,11 +300,21 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
 				
 				Map m = msa.getItem(position);
-				ImageView map = (ImageView)findViewById(MAP_IMAGE_ID);
+				MapImageView map = (MapImageView)findViewById(MAP_IMAGE_ID);
 				map.setAlpha(.3f);
-				map.setContentDescription(Integer.toString(position));
+				ArrayList<Float> marks = new ArrayList<Float>();
+				for (Stop s : Globals.getStops())
+				{
+					if (s.getStopMapID() == m.getMapId())
+					{
+						marks.add(s.getStopPositionX());
+						marks.add(s.getStopPositionY());
+					}
+				}
+				map.setMapMarks(marks);
+				map.setContentDescription(m.getMapUrl() + "," + m.getMapId());
 				ImageRetrievalTask irt = new ImageRetrievalTask(map);
-				irt.execute(Globals.getMaps()[position].getMapUrl());
+				irt.execute(m.getMapUrl());
 				
 			}
 
