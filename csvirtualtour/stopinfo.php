@@ -61,6 +61,10 @@ function renderJSON() {
 $(document).ready( function() {
 	framework = new ComponentFramework( "compContainer");
 	framework.loadFromJSON('<?php echo addslashes($stopcontent)?>');
+    
+    set_position( <?php echo "$stopx, $stopy";?>);
+
+
 	$('#clickymap').click(
 		function(event){ 
 			var offset = $(this).offset();
