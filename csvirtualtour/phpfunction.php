@@ -31,7 +31,7 @@ function footer($more) {
 		<hr>
 		<h3>" .
 			$more .
-			"<a href='index.php'>Logout</a>
+			"<a href='http://sw.cs.wwu.edu/~vut3/virtualtour/index.php'>Logout</a>
 		</h3>
 		</body>
 		</html>
@@ -76,15 +76,9 @@ $dbname = 'mysql:host=localhost;dbname=strandbu_virtour;charset=utf8';
 $dbuser = 'strandbu_virtour';
 $dbpass = 'g3pWI6WNDQDd';
 
-$link = mysqli_connect("strandburg.us", "strandbu_virtour", "g3pWI6WNDQDd", "strandbu_virtour")
+$link = mysqli_connect("mysql.cs.wwu.edu", "", "", "")
     or die("Error " . mysqli_error($link));
     
-$writedb = mysqli_connect("strandburg.us", "strandbu_virtour", "g3pWI6WNDQDd", "strandbu_virtour")
+$writedb = mysqli_connect("mysql.cs.wwu.edu", "", "", "")
     or die("Error " . mysqli_error($link));
-
-/*$link = mysqli_connect("mysql.cs.wwu.edu", "vut3", "", "vut3")
-    or die("Error " . mysqli_error($link));
-	
-$writedb = mysqli_connect("mysql.cs.wwu.edu", "vut3_writer", "", "vut3")
-    or die("Error " . mysqli_error($link));*/
 ?>
