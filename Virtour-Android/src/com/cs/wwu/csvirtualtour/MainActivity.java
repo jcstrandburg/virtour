@@ -280,6 +280,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		{
 			Intent intent = new Intent(this,StopActivity.class);
 			intent.putExtra("StopID", id);
+			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(intent);
 		}
 		

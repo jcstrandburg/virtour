@@ -62,7 +62,7 @@ public class StopGenerator {
 			
 			for (int i = 0; i < stops.length() ; i++){
 				JSONObject stop = stops.getJSONObject(i);
-				returned[i] = new Stop(stop.getString("StopName"), stop.getInt("StopID"), stop.getInt("StopOrder"),(float)stop.getDouble("StopX"),(float)stop.getDouble("StopY"),stop.getString("StopQRIdentifier"),"null",stop.getInt("MapID"));
+				returned[i] = new Stop(stop.getString("StopName"), stop.getInt("StopID"), stop.getInt("StopOrder"),(float)stop.getDouble("StopX"),(float)stop.getDouble("StopY"),stop.getString("StopQRIdentifier"),"null",stop.getInt("MapID"),stop.getString("RoomNumber"));
 			}
 			return returned;
 			
@@ -82,7 +82,7 @@ public class StopGenerator {
 			//Log.d("StopGenerator", stop.toString());
 			
 			returned[0] = new Stop(stop.getString("StopName"), stop.getInt("StopID"), stop.getInt("StopOrder"), (float)stop.getDouble("StopX"), 
-										(float)stop.getDouble("StopY"), stop.getString("StopQRIdentifier"), stop.getString("StopContent"), stop.getInt("MapID"));
+										(float)stop.getDouble("StopY"), stop.getString("StopQRIdentifier"), stop.getString("StopContent"), stop.getInt("MapID"),stop.getString("RoomNumber"));
 		} catch (JSONException e) {
 			Log.d("StopGenerator","" + e.getMessage());
 		}
