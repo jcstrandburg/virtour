@@ -198,5 +198,7 @@ $upload_limit = min($max_upload, $max_post, $memory_limit);
 </div>
 
 <?php
-echo footer('', '../');
+$more = $more = "<a href='../admin.php'>Administrative Functions</a>
+			</br>";
+echo footer($more);
 ?>
