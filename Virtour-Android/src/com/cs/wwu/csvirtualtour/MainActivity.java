@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.widget.*;
 
 public class MainActivity extends Activity implements OnClickListener, OnTaskCompleted {
 
@@ -61,10 +62,6 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			RelativeLayout.LayoutParams.WRAP_CONTENT
 			);
 	
-	//Floor Button IDs
-	private static final int FIRST_FLOOR_ID = 9871;
-	private static final int FOURTH_FLOOR_ID = 9874;
-	
 	//QR Code Button ID
 	private static final int QR_READER_ID = 9890;
 	
@@ -73,6 +70,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	private static final int MAP_IMAGE_ID = 5002;
 	private static final int MAP_LAYOUT_ID = 5003;
 	private static final int MAP_BUTTON_LAYOUT_ID = 5004;
+	private static final int STOP_LIST_ID =5005;
 	
 	//Stop IDs
 	private static final int MAIN_SCREEN_STOP_ID = -1;
@@ -125,28 +123,16 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		buttonLayout.setOrientation(LinearLayout.VERTICAL);
 		buttonLayout.setId(MAP_BUTTON_LAYOUT_ID);
 		
-		//Map (Maybe pull image from web later)
+		ListView stopList = new ListView(this);
+		stopList.setLayoutParams(CONTENT_LAYOUT_PARAMS);
+		stopList.setId(STOP_LIST_ID);
+		
+		//Map 
 		MapImageView mapView = new MapImageView(this);
 		mapView.setLayoutParams(IMAGE_LAYOUT_PARAMS);
 		mapView.setAdjustViewBounds(true);
 		mapView.setId(MAP_IMAGE_ID);
 		mapView.setOnClickListener(this);
-		
-//		//Buttons for floors (These could maybe be made more dynamic later)
-//		Button b_floor1 = new Button(this);
-//		Button b_floor4 = new Button(this);
-//		
-//		b_floor1.setLayoutParams(BUTTON_LAYOUT_PARAMS);
-//		b_floor4.setLayoutParams(BUTTON_LAYOUT_PARAMS);
-//		
-//		b_floor1.setText(R.string.floor1);
-//		b_floor4.setText(R.string.floor4);
-//		
-//		b_floor1.setId(FIRST_FLOOR_ID);
-//		b_floor4.setId(FOURTH_FLOOR_ID);
-//		
-//		b_floor1.setOnClickListener(this);
-//		b_floor4.setOnClickListener(this);
 		
 		//Welcome Message Static for now, but could be made to be pulled from web
 		TextView welcomeTitle = new TextView(this);
@@ -165,11 +151,6 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		b_scanner.setOnClickListener(this);
 		b_scanner.setId(QR_READER_ID);
 		
-		
-//		//Put it all together
-//		buttonLayout.addView(b_floor1);
-//		buttonLayout.addView(b_floor4);
-
 		mapLayout.addView(mapView);
 		mapLayout.addView(buttonLayout);
 		
@@ -177,7 +158,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		scrollLayout.addView(b_scanner);
 		scrollLayout.addView(welcomeTitle);
 		scrollLayout.addView(welcomeMessage);
-		//scrollLayout.addView(mapLayout);
+		
 		//Add Buttons to View 
 		addStops();
 		retrieveMaps();
@@ -304,31 +285,33 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	public void onTaskCompleted(Stop[] stops){
 		
 		LinearLayout scrollLayout = (LinearLayout)findViewById(5001);
-		LinearLayout buttonLayout = new LinearLayout(this);
-		buttonLayout.setOrientation(LinearLayout.VERTICAL);
-		buttonLayout.setLayoutParams(CONTENT_LAYOUT_PARAMS);
-		Log.d("Main","attempting to add stops");
+//		LinearLayout buttonLayout = new LinearLayout(this);
+//		buttonLayout.setOrientation(LinearLayout.VERTICAL);
+//		buttonLayout.setLayoutParams(CONTENT_LAYOUT_PARAMS);
+//		Log.d("Main","attempting to add stops");
 		//build a button for each stop (set id so we can determine which stop?)
+		
+		ListView stopList = (ListView) findViewById(STOP_LIST_ID);
 		if (stops != null)
 		{
+			ArrayList<String> sArrayList = new ArrayList<String>();
 			Arrays.sort(stops);
 			Globals.setStops(stops);
-			//mapCoordinates = new float[stops.length * 2];
-			int i = 0;
 			for (Stop s : stops){
-				Button Temp = new Button(this);
-				Temp.setLayoutParams(BUTTON_LAYOUT_PARAMS);
-				Log.d("Main",s.getStopName());
-				Temp.setText(s.getStopName());
-				Temp.setId(s.getStopID());
-				Temp.setOnClickListener(this);
-				buttonLayout.addView(Temp);
-				//mapCoordinates[i] = s.getStopPositionX();
-				//mapCoordinates[i+1] = s.getStopPositionY();
-				i = i + 2;
+				
+				sArrayList.add(s.getStopName());
+//				Button Temp = new Button(this);
+//				Temp.setLayoutParams(BUTTON_LAYOUT_PARAMS);
+//				Log.d("Main",s.getStopName());
+//				Temp.setText(s.getStopName());
+//				Temp.setId(s.getStopID());
+//				Temp.setOnClickListener(this);
+//				buttonLayout.addView(Temp);
 			}
+			ArrayAdapter<String> stopAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,android.R.id.text1,sArrayList);
+			stopList.setAdapter(stopAdapter);
 		}
-		scrollLayout.addView(buttonLayout);
+		scrollLayout.addView(stopList);
 	}
 	
 	public void onTaskCompleted(Map[] maps)
