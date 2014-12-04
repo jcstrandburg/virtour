@@ -4,8 +4,8 @@ include 'phpfunction.php';
 
 if (isset($_POST['sent'])) {
 	$sent = $_POST['sent'];
-	$stopname = cleanString($link, $_POST['stopname']);
-	$stoporder = cleanString($link, $_POST['stoporder']);
+	$stopname = $_POST['stopname'];
+	$stoporder = $_POST['stoporder'];
 	$stopcontent = $_POST['stopcontent'];
 	$stopx = $_POST['stopx'];
 	$stopy = $_POST['stopy'];
@@ -15,7 +15,7 @@ if (isset($_POST['sent'])) {
 $more = "<a href='stops.php'>List Of Stops</a>
 			</br>";
 
-if($_SESSION['user'] != 0) {
+if($_SESSION['user'] == 1 || $_SESSION['user'] == 2) {
 	if(!empty($sent)) {
 		$query = "insert into Stops (StopName, StopContent, StopOrder, StopX, StopY, MapID) values 
 			('" . $stopname . "', '" . $stopcontent. "', '" . $stoporder . "', '" . $stopx . "', '" . $stopy . "', '".$mapid."')";

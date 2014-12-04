@@ -10,28 +10,7 @@ if( $_SESSION['user'] == 0) {
 
 $target_dir = "./";
 
-function get_size_limit($fieldname) {
-	$val = trim(ini_get($fieldname));
-	$postfix = strtolower($val[strlen($val)-1]);
-	switch ($postfix) {
-		case 'k':
-			$val = intval($val)*1024;
-			break;
-		case 'm':
-			$val = intval($val)*1024*1024;
-			break;
-		case 'g':
-			$val = intval($val)*1024*1024*1024;
-			break;
-	}
-	return $val;
-}
-//find the maximum file upload size
-$max_upload = get_size_limit('upload_max_filesize');
-$max_post = get_size_limit('post_max_size');
-$memory_limit = get_size_limit('memory_limit');
-$upload_limit = min($max_upload, $max_post, $memory_limit);
-$limit_mb = $upload_limit / (1024*1024);
+$limit_mb = find_file_upload_limit();
 
 if ( count($_FILES) == 0) {
 	die("No files received! You may have exceeded the file upload limit, which appears to be {$limit_mb} MB");
@@ -39,12 +18,13 @@ if ( count($_FILES) == 0) {
 
 if(isset($_POST["submit"])) {
 
-    $basename = basename($_FILES["fileToUpload"]["name"]);
+    $basename = str_replace(' ','',basename($_FILES["fileToUpload"]["name"]));
 	$target_file = $target_dir . $basename;
     	
 	if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
         $mapdesc = $_POST["description"];
-        $query = "INSERT INTO `maps`(`url`, `desc`, `ordering`) VALUES ('$basename', '$mapdesc', '0')";
+        $mapordering = $_POST['ordering'];
+        $query = "INSERT INTO `maps`(`url`, `desc`, `ordering`) VALUES ('$basename', '$mapdesc', '$mapordering')";
 
         if (!mysqli_query($writedb, $query)) {
             unlink( $target_file);

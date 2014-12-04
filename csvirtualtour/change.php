@@ -4,7 +4,7 @@ include 'phpfunction.php';
 
 if($_SESSION['user'] != 0) {
 
-	$user = cleanString($link, $_GET['user']);
+	$user = $_GET['user'];
 	$click = $_POST['click'];
 	$new1 = cleanString($link, $_POST['new1']);
 	$new2 = cleanString($link, $_POST['new2']);

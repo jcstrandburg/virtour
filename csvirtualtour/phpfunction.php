@@ -31,7 +31,7 @@ function footer($more) {
 		<hr>
 		<h3>" .
 			$more .
-			"<a href='http://sw.cs.wwu.edu/~vut3/virtualtour/index.php'>Logout</a>
+			"<a href='index.php'>Logout</a>
 		</h3>
 		</body>
 		</html>
@@ -42,7 +42,7 @@ function footer($more) {
 
 function get_map_list() {
     global $link;
-    $query = "SELECT * FROM maps";
+    $query = "SELECT * FROM maps ORDER BY `ordering` ASC";
     $result = mysqli_query($link, $query);
 
     $maps = array();
@@ -52,6 +52,7 @@ function get_map_list() {
             $maps[$row["id"]] = $row;
         }
     }
+
     return $maps;
 }
 
@@ -72,5 +73,35 @@ function checkURL($url) {
 	}
 }
 
+function get_size_limit($fieldname) {
+    $val = trim(ini_get($fieldname));
+    $postfix = strtolower($val[strlen($val)-1]);
+    switch ($postfix) {
+	    case 'k':
+		    $val = intval($val)*1024;
+		    break;
+	    case 'm':
+		    $val = intval($val)*1024*1024;
+		    break;
+	    case 'g':
+		    $val = intval($val)*1024*1024*1024;
+		    break;
+    }
+    return $val;
+}
+
+function find_file_upload_limit() {
+    //find the maximum file upload size
+    $max_upload = get_size_limit('upload_max_filesize');
+    $max_post = get_size_limit('post_max_size');
+    $memory_limit = get_size_limit('memory_limit');
+    $upload_limit = min($max_upload, $max_post, $memory_limit);
+    $limit_mb = $upload_limit / (1024*1024);
+
+    return $limit_mb;
+}
+
+
 require_once("dbconnections.php");
+
 ?>

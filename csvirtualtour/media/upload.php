@@ -39,7 +39,7 @@ if ( count($_FILES) == 0) {
 
 if(isset($_POST["submit"])) {
 
-	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+	$target_file = str_replace(' ','',$target_dir . basename($_FILES["fileToUpload"]["name"]));
     
 	if (file_exists($target_file)) {
 		die("File already exists on server!");
