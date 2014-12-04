@@ -241,13 +241,21 @@ ImageComponent.prototype.getJSONObject = function() {
     return {type: 'image', title: this.title, url: this.url};
 }
 
-function force_http_prefix(url) {
-	return "http:"+url;
+function url_correct(url) {
+
+    url = url.replace(/\s/g, "%20");
+
+    if (url.indexOf("http") != 0) {
+    	return "http:"+url;
+    }
+    else {
+        return url;
+    }
 }
 
 ImageComponent.prototype.updateFromDOM = function(source) {
     this.title = source.find("input[name=title]").val();
-    this.url = force_http_prefix(source.find("input[name=url]").val());
+    this.url = url_correct(source.find("input[name=url]").val());
 }
 
 ImageComponent.prototype.renderInnerHTML = function() {
@@ -303,7 +311,7 @@ VideoComponent.prototype.getJSONObject = function() {
 }
 VideoComponent.prototype.updateFromDOM = function(source) {
     this.title = source.find("input[name=title]").val();
-    this.url = force_http_prefix(source.find("input[name=url]").val());
+    this.url = url_correct(source.find("input[name=url]").val());
 }
 
 VideoComponent.prototype.renderInnerHTML = function() {
