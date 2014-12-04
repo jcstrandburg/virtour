@@ -72,19 +72,6 @@ function checkURL($url) {
 	}
 }
 
-$dbname = 'mysql:host=localhost;dbname=strandbu_virtour;charset=utf8';
-$dbuser = 'strandbu_virtour';
-$dbpass = 'g3pWI6WNDQDd';
+require_once("dbconnections.php");
 
-$link = mysqli_connect("strandburg.us", "strandbu_virtour", "g3pWI6WNDQDd", "strandbu_virtour")
-    or die("Error " . mysqli_error($link));
-    
-$writedb = mysqli_connect("strandburg.us", "strandbu_virtour", "g3pWI6WNDQDd", "strandbu_virtour")
-    or die("Error " . mysqli_error($link));
-
-/*$link = mysqli_connect("mysql.cs.wwu.edu", "vut3", "", "vut3")
-    or die("Error " . mysqli_error($link));
-	
-$writedb = mysqli_connect("mysql.cs.wwu.edu", "vut3_writer", "", "vut3")
-    or die("Error " . mysqli_error($link));*/
 ?>
