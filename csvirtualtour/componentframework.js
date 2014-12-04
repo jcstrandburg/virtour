@@ -245,8 +245,8 @@ function url_correct(url) {
 
     url = url.replace(/\s/g, "%20");
 
-    if (url.indexOf("http") != 0) {
-    	return "http:"+url;
+    if (url.indexOf("http://") != 0) {
+    	return "http://"+url;
     }
     else {
         return url;
@@ -261,7 +261,7 @@ ImageComponent.prototype.updateFromDOM = function(source) {
 ImageComponent.prototype.renderInnerHTML = function() {
     return "<h4>Image Component</h4>"+
            "Title: <input type='text' name='title' value='"+this.title+"'><br>"+
-           "URL: <input type='text' name='url' value='"+this.url+"'><br>"+		   
+           "URL: <input type='text' name='url' value='"+this.url+"'><br>"+
 		   "<button class='fileSelectButton'>Select Media From Server</button>"+
 		   "</div><div class='previewPane'>"+
            "<img class='largePreview' alt='Preview' src='"+this.url+"'><br>";
@@ -359,10 +359,8 @@ function DoFileSelect(type, callback) {
 		data: {"filters": filters},
 		
 	}).done(function(data){
-		var string = "";
 		options = $('#mediaSelector');
 		for(var elem in data) {
-			string += (elem + ": " + data[elem]+'\n');
 			options.append("<option value='"+data[elem]+"'>"+elem+"</option>");
 		}
 	});
