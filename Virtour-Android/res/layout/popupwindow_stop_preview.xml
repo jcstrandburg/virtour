@@ -2,32 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:id="@+id/popup_layout"
+    android:background="@android:color/background_light" >
 
-    <EditText
-        android:id="@+id/editText1"
+    <TextView
+        android:id="@+id/intro_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10" >
+        android:ems="10"
+      	android:text="@string/welcome_para"
+        android:gravity="center">
 
         <requestFocus />
-    </EditText>
+    </TextView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btn_tour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Start Guided Tour" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btn_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Browse Stops" />
 
     </LinearLayout>
 

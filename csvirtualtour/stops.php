@@ -40,12 +40,12 @@ if($_SESSION['user'] != 0) {
 		}
 	}
 	
-	if($_SESSION['user'] == 1) {
+	//if($_SESSION['user'] == 1) {
 		$more = "<a href='newstop.php'>Add New Stop</a>
 			</br>
 			<a href='admin.php'>Administrative Functions</a>
 			</br>";
-	}
+	//}
 }
 else {
 	header("Location:index.php");

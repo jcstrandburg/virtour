@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.view.*;
 
-public class MapViewActivity extends Activity {
+public class MapViewActivity extends Activity implements OnContentLoaded {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +32,19 @@ public class MapViewActivity extends Activity {
 			@Override
 			public void run() {
 				MapTouchImageView mapView = (MapTouchImageView) findViewById(999);
-				ImageRetrievalTask irt = new ImageRetrievalTask(mapView);
+				ImageRetrievalTask irt = new ImageRetrievalTask(mapView,MapViewActivity.this);
 				irt.execute(Globals.getMaps()[id].getMapUrl());
 				
 			}
 	
 		});
 		mainView.addView(mapView);
+	}
+
+	@Override
+	public void onContentLoaded() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

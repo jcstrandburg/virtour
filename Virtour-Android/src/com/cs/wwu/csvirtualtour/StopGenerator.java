@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class StopGenerator {
 
-	private static final String STOP_URL = "http://sw.cs.wwu.edu/~strandj5/csvirtualtour/jsonapi?stopid=";
+	private static final String STOP_URL = "http://sw.cs.wwu.edu/~vut3/virtualtour/jsonapi?stopid=";
 	public StopGenerator() {
 		// TODO Auto-generated constructor stub
 	}
