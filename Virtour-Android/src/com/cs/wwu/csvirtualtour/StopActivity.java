@@ -13,21 +13,25 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.*;
 
-public class StopActivity extends Activity implements OnClickListener, OnTaskCompleted {
+public class StopActivity extends Activity implements OnClickListener, OnTaskCompleted, OnContentLoaded {
 
 	private static final int MAIN_LAYOUT_ID = R.id.layout_stop;
 	private static final int MAP_IMAGE_ID = 5006;
+	private static final int BTN_NEXT_ID = 4999;
 	
 	int stopID;
+	int queuedContent = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,10 +57,11 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	
 	private void BuildStop() {
 		//Create a ScrollView To Hold Everything
-		ScrollView mainView = (ScrollView) findViewById(R.id.scroll_stop);
+		//ScrollView mainView = (ScrollView) findViewById(R.id.scroll_stop);
 		
 		LinearLayout mainLayout = (LinearLayout) findViewById(MAIN_LAYOUT_ID);
 		mainLayout.setOrientation(LinearLayout.VERTICAL);
+		mainLayout.setVisibility(View.INVISIBLE);
 		
 		//Retrive the desired stop
 		StopRetrievalTask sr = new StopRetrievalTask(this);
@@ -79,10 +84,12 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 				}
 				else if (widgetType.equals("image")){
 					AddImageWidget(widget);
+					this.queuedContent ++;
 				}
 				else if (widgetType.equals("video")) {
 					
 					AddVideoWidget(widget);
+					this.queuedContent ++;
 				}
 				
 				
@@ -91,9 +98,22 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 				e.printStackTrace();
 			}
 		}
-
-	}
+		addNextButton();
+			}
 	
+	private void addNextButton()
+	{
+		Button next = new Button(this);
+		next.setLayoutParams(MainActivity.CONTENT_LAYOUT_PARAMS);
+		next.setId(BTN_NEXT_ID);
+		next.setText("Next Stop");
+		next.setGravity(Gravity.CENTER_HORIZONTAL);
+		
+		next.setOnClickListener(this);
+		
+		LinearLayout mainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
+		mainLayout.addView(next);
+	}
 	private void AddTextWidget(JSONObject Widget) throws JSONException{
 		String titleString, content = "";
 		
@@ -129,7 +149,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		ImageView imageContent = new ImageView(this);
 		imageContent.setLayoutParams(MainActivity.SECOND_IMAGE_LAYOUT_PARAMS);
 		imageContent.setAdjustViewBounds(true);
-		ImageRetrievalTask irt = new ImageRetrievalTask(imageContent);
+		ImageRetrievalTask irt = new ImageRetrievalTask(imageContent,this);
 		irt.execute(urlString);
 		imageContent.setImageResource(R.drawable.placeholder);
 		//Add content to screen
@@ -158,7 +178,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		TextView textTitle = GenerateTitle(titleString);
 
 		//Retrieve a thumbnail and set it to the image preview
-		ThumbnailRetrievalTask trt = new ThumbnailRetrievalTask(videoPreview);
+		ThumbnailRetrievalTask trt = new ThumbnailRetrievalTask(videoPreview,this);
 		videoPreview.setOnClickListener(this);
 		trt.execute(urlString);
 		videoPreview.setContentDescription(urlString);
@@ -229,8 +249,9 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 			@Override
 			public void run() {
 				MapImageView map = (MapImageView) findViewById(MAP_IMAGE_ID);
-				ImageRetrievalTask irt = new ImageRetrievalTask(map);
+				ImageRetrievalTask irt = new ImageRetrievalTask(map,StopActivity.this);
 				irt.execute(thisMap.getMapUrl());
+				queuedContent++;
 				
 			}
 			
@@ -273,12 +294,54 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 			startActivity(intent);
 			
 		}
+		if (v.getId() == BTN_NEXT_ID)
+		{
+			int next = getNextStop();
+			
+			if (next != -1)
+			{
+				Intent intent = new Intent(this,StopActivity.class);
+				intent.putExtra("StopID", next);
+				startActivity(intent);
+			}
+			else
+			{
+				Toast t = Toast.makeText(this, "No more Stops", Toast.LENGTH_LONG);
+				t.show();
+			}
+		}
+	}
+	
+	private int getNextStop() {
 		
+		Stop[] stops = Globals.getStops();
+		
+		for (int i = 0; i < stops.length - 1; i++)
+		{
+			if (stops[i].getStopID() == stopID)
+			{
+				return stops[i+1].getStopID();
+			}
+		}
+		
+		return -1;
 	}
 
 	@Override
 	public void onTaskCompleted(Map[] m) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onContentLoaded() {
+		this.queuedContent --;
+		
+		if (queuedContent == 0)
+		{
+			LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
+			MainLayout.setVisibility(View.VISIBLE);
+		}
 		
 	}
 	

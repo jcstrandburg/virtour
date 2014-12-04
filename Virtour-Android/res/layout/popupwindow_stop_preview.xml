@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:text="SOME POPUP SHENANIGANS"
+      	android:text="@string/welcome_para"
         android:gravity="center">
 
         <requestFocus />
@@ -31,7 +31,7 @@
             android:id="@+id/btn_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Close" />
+            android:text="Browse Stops" />
 
     </LinearLayout>
 

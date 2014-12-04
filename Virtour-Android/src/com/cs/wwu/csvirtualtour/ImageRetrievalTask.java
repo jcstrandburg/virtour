@@ -12,9 +12,10 @@ import android.widget.ImageView;
 
 public class ImageRetrievalTask extends AsyncTask<String, Void, Bitmap> {
 	ImageView Image;
-	
-	public ImageRetrievalTask(ImageView theImage) {
+	OnContentLoaded contentloader;
+	public ImageRetrievalTask(ImageView theImage, OnContentLoaded loader) {
 		this.Image = theImage;
+		this.contentloader = loader;
 	}
 	@Override
 	protected Bitmap doInBackground(String... urls) {
@@ -36,6 +37,10 @@ public class ImageRetrievalTask extends AsyncTask<String, Void, Bitmap> {
 		Image.setAlpha(1f);
 		Image.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(result, Image.getWidth(), Image.getHeight()));
 		Image.setVisibility(View.VISIBLE);
+		if (this.contentloader != null)
+		{
+			this.contentloader.onContentLoaded();
+		}
 	}
 
 }

@@ -9,9 +9,10 @@ import android.widget.ImageView;
 public class ThumbnailRetrievalTask extends AsyncTask<String, Void, Bitmap> {
 
 	ImageView Image;
-	
-	public ThumbnailRetrievalTask(ImageView theImage) {
+	OnContentLoaded theloader;
+	public ThumbnailRetrievalTask(ImageView theImage, OnContentLoaded loader) {
 		this.Image = theImage;
+		this.theloader = loader;
 	}
 	@Override
 	protected Bitmap doInBackground(String... urls) {
@@ -28,6 +29,7 @@ public class ThumbnailRetrievalTask extends AsyncTask<String, Void, Bitmap> {
 	
 	protected void onPostExecute(Bitmap result) {
 		Image.setImageBitmap(result);
+		this.theloader.onContentLoaded();
 	}
 
 }
