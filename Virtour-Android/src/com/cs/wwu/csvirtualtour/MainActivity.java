@@ -6,12 +6,15 @@ import java.util.Arrays;
 import com.cs.wwu.csvirtualtour.R;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.widget.AdapterView;
@@ -21,6 +24,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -181,6 +185,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		mainLayout.addView(mainView);
 		setContentView(mainLayout,MAIN_LAYOUT_PARAMS);
 		
+		
 //		mapView.post(new Runnable () {
 //			@Override
 //			public void run() {
@@ -189,7 +194,54 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 //						R.drawable.cf1_trace, mapView.getMeasuredWidth(), mapView.getMeasuredHeight()));
 //			}
 //		});
+		mainLayout.post(new Runnable() {
+
+			@Override
+			public void run() {
+				inititateIntroPopup();
+				
+			}
+			
+		});
 		
+	}
+	
+	private PopupWindow pw;
+	
+	private void inititateIntroPopup() {
+		LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
+		View layout = inflater.inflate(R.layout.popupwindow_stop_preview, (ViewGroup) findViewById(R.id.popup_layout));
+		pw = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,true);
+		
+		Button guide = (Button) layout.findViewById(R.id.btn_tour);
+		
+		guide.setOnClickListener(new OnClickListener() 
+		{
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),StopActivity.class);
+				intent.putExtra("StopID",Globals.getStops()[0].getStopID());
+				pw.dismiss();
+				startActivity(intent);
+				
+			}
+			
+		});
+		
+		Button close = (Button) layout.findViewById(R.id.btn_close);
+		
+		close.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				pw.dismiss();	
+			}
+			
+		});
+		
+		pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
 	}
 	
 	private void addStops(){

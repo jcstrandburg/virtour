@@ -54,35 +54,13 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	private void BuildStop() {
 		//Create a ScrollView To Hold Everything
 		ScrollView mainView = (ScrollView) findViewById(R.id.scroll_stop);
-		//mainView.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
 		
 		LinearLayout mainLayout = (LinearLayout) findViewById(MAIN_LAYOUT_ID);
-		//mainLayout.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
-		//mainLayout.setId(MAIN_LAYOUT_ID);
 		mainLayout.setOrientation(LinearLayout.VERTICAL);
-		
-//		//Add The Map
-//		LinearLayout mapLayout = new LinearLayout(this);
-//		mapLayout.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
-//		mapLayout.setOrientation(LinearLayout.HORIZONTAL);
-//		
-//		ImageView mapView = new ImageView(this);
-//		mapView.setLayoutParams(MainActivity.SECOND_IMAGE_LAYOUT_PARAMS);
-//		mapView.setImageResource(R.drawable.cf420);
-//		mapView.setBackgroundColor(Color.CYAN);
-//		mapView.setAdjustViewBounds(true);;
 		
 		//Retrive the desired stop
 		StopRetrievalTask sr = new StopRetrievalTask(this);
 		sr.execute(stopID);
-		
-		//Add items to screen
-		//mapLayout.addView(mapView);
-		//mainLayout.addView(mapLayout);
-		//mainLayout.addView(GenerateMarkedMap(100,100));
-		//mainView.addView(mainLayout);
-		
-		//setContentView(mainView,MainActivity.MAIN_LAYOUT_PARAMS);
 		
 		
 	}
@@ -245,7 +223,6 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		}
 		
 		final Map thisMap = map;
-		//mapView.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), R.drawable.cf4_trace, mapView.getWidth(), mapView.getHeight()));
 		
 		mapView.post(new Runnable(){
 
@@ -259,16 +236,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 			
 		});
 		mapView.setAdjustViewBounds(true);
-		//mapView.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(),
-				//R.drawable.cf4_trace, mapView.getWidth(), mapView.getHeight()));
-		//put mark in layout at specified location
-//		ImageView markView = new ImageView(this); 
-//		markView.setLayoutParams(MainActivity.CONTENT_LAYOUT_PARAMS);
-//		markView.setImageResource(R.drawable.mark);
-//		
-		//Put Items in Layout
 		mapLayout.addView(mapView);
-		//mapLayout.addView(markView,markx,marky);
 		
 		return mapLayout;
 	}

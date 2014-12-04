@@ -16,7 +16,7 @@ import android.util.Log;
 
 public class MapRetrievalTask extends AsyncTask<Void, Void, Map[]> {
 
-	private static final String MAP_URL = "http://sw.cs.wwu.edu/~strandj5/csvirtualtour/maps/list.php";
+	private static final String MAP_URL = "http://sw.cs.wwu.edu/~vut3/virtualtour/maps/list.php";
 	private OnTaskCompleted listener;
 	
 	public MapRetrievalTask(MainActivity listener){
