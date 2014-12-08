@@ -14,8 +14,9 @@ if($_SESSION['user'] != 0) {
 		}
 		else {
 			$password = crypt($password, $salt);
-			$query = "insert into user (username, password) values ('$username', '$password')";
-			mysqli_query($link, $query);
+			$stmt = $writedb->prepare("insert into user (username, password) values (?, ?)");
+            $stmt->bind_param("ss", $username, $password);
+            $success = $stmt->execute();
 			header("Location:staff.php");
 		}
 	}

@@ -10,11 +10,17 @@ if($_SESSION['user'] != 0) {
 	
 	//remove selected stop
 	if (!empty($did)) {
-		mysqli_query($link, "delete from Stops where StopID = '$did'");
+        $stmt = $writedb->prepare("delete from Stops where StopID = ?");
+        $stmt->bind_param("i", $did);
+        $success = $stmt->execute();
+        $stmt->close();
 	}
 	
 	if(!empty($aid)) {
-		mysqli_query($link, "update Stops set Active = '" . $active . "' where StopID = '" . $aid . "'");
+        $stmt = $writedb->prepare("update Stops set Active = ? where StopID = ?");
+        $stmt->bind_param("si", $active, $aid);
+        $success = $stmt->execute();
+        $stmt->close();
 	}
 	
 	//select all the remaining stops
@@ -28,7 +34,7 @@ if($_SESSION['user'] != 0) {
 				$table = $table . "<tr><td>" . $row['StopName'] . "</td>
 				<td>" . $row['StopOrder'] . "</td>
 				<td><a href='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CSVTour://" . $row['StopID'] . "' target='_blank'>Click for QR Code</a></td>
-				<td><a href='stopinfo.php?eid=" . $row['StopID'] . "'>Edit</a>/<a href='stops.php?did=" . $row['StopID'] . "'>Delete</a>/
+				<td><a href='stopinfo.php?eid=" . $row['StopID'] . "'>Edit</a>/<a href='stops.php?did=" . $row['StopID'] . "' onClick='confirm(\"Are you sure?\");'>Delete</a>/
 				<a href='stops.php?aid=" . $row['StopID'] . "&active=no'>Deactivate</a></td></tr>";
 			}
 			else {

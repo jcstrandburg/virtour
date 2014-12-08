@@ -24,18 +24,17 @@ if(isset($_POST["submit"])) {
 	if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
         $mapdesc = $_POST["description"];
         $mapordering = $_POST['ordering'];
-        $query = "INSERT INTO `maps`(`url`, `desc`, `ordering`) VALUES ('$basename', '$mapdesc', '$mapordering')";
-
-        if (!mysqli_query($writedb, $query)) {
+        $query = "INSERT INTO `maps`(`url`, `desc`, `ordering`) VALUES (?, ?, ?)";
+        $stmt = $writedb->prepare($query);
+        $stmt->bind_param("ssi", $basename, $mapdesc, $mapordering);
+        if (!$stmt->execute()) {
             unlink( $target_file);
-            echo "Query failed: ".mysqli_error($writedb)."<br>";
-            echo "Query: ".$query."<br>";
-            die( "Operation failed");
+            die( "Operation failed: ".$stmt->error);
         }
 
         header("Location: manage.php");
     } else {
-        die("Sorry, there was an error uploading your file. You may have exceeded the file upload limit, which appears to be {$limit_mb} MB");
+        die("Sorry, there was an error uploading your file. You either need to adjust your permissions or you may have exceeded the file upload limit, which appears to be {$limit_mb} MB");
     }
 }
 else {

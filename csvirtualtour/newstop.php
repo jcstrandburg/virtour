@@ -18,10 +18,17 @@ $more = "<a href='stops.php'>List Of Stops</a>
 if($_SESSION['user'] == 1 || $_SESSION['user'] == 2) {
 	if(!empty($sent)) {
 		$query = "insert into Stops (StopName, StopContent, StopOrder, StopX, StopY, MapID) values 
-			('" . $stopname . "', '" . $stopcontent. "', '" . $stoporder . "', '" . $stopx . "', '" . $stopy . "', '".$mapid."')";
-		mysqli_query($writedb, $query);
-		
-		mysqli_query($writedb, "update Stops set StopQRIdentifier = StopID where StopName = '" . $stopname . "'");
+			(?, ?, ?, ?, ?, ?)";
+
+        $stmt = $writedb->prepare($query);
+        $stmt->bind_param("ssiddi", $stopname, $stopcontent, $stoporder, $stopx, $stopy, $mapid);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        $stmt = $writedb->prepare("update Stops set StopQRIdentifier = StopID where StopName=?");	
+        $stmt->bind_param("s", $stopname);
+        $success = $stmt->execute();
+        $stmt->close();
 		header("Location:stops.php");
 	}
 }
