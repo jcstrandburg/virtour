@@ -38,6 +38,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	private static final int BTN_PREVIOUS_ID = 4998;
 	
 	int stopID;
+	int mapId;
 	int queuedContent = 0;
 	
 	private GestureDetector gestureDetector;
@@ -272,6 +273,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		mapView.setImageResource(R.drawable.placeholder);
 		mapView.setVisibility(View.INVISIBLE);
 		mapView.setSelectedMark(markx, marky);
+		mapView.setOnClickListener(this);
 		
 		Map map = null;
 		
@@ -285,6 +287,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		}
 		
 		final Map thisMap = map;
+		mapView.setContentDescription(thisMap.getMapUrl() + "," + thisMap.getMapId());
 		
 		mapView.post(new Runnable(){
 
@@ -308,6 +311,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	public void onTaskCompleted(Stop[] s) {
 		// TODO Auto-generated method stub
 		Stop thisStop = s[0];
+		this.mapId = thisStop.getStopMapID();
 		
 		JSONArray stopContent = null;
 		try {
@@ -328,7 +332,16 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 
 	@Override
 	public void onClick(View v) {
-		if (v instanceof ImageView)
+		
+		if (v.getId() == MAP_IMAGE_ID)
+		{
+			ImageView mapView = (ImageView) findViewById(MAP_IMAGE_ID);
+	     	Intent intent = new Intent(this, ImageViewActivity.class);
+			intent.putExtra("values",mapView.getContentDescription());
+			startActivity(intent);
+		}
+		
+		else if (v instanceof ImageView)
 		{
 			Intent intent = new Intent(this, VideoPlayerActivity.class);
 			intent.putExtra("url",v.getContentDescription());
@@ -336,7 +349,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 			startActivity(intent);
 			
 		}
-		if (v.getId() == BTN_NEXT_ID)
+		else if (v.getId() == BTN_NEXT_ID)
 		{
 			int next = getNextStop();
 			
@@ -353,7 +366,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 				t.show();
 			}
 		}
-		if (v.getId() == BTN_PREVIOUS_ID)
+		else if (v.getId() == BTN_PREVIOUS_ID)
 		{
 			int prev = getPreviousStop();
 			
@@ -425,6 +438,14 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		return gestureDetector.onTouchEvent(event);
 	}
 	
+	@Override
+	public void onBackPressed() {
+		
+		Intent intent = new Intent(this,MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
+	}
+	
 	class MyGestureDetector extends SimpleOnGestureListener {
 		
 		private static final int SWIPE_MIN_DISTANCE = 120;
@@ -445,7 +466,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	    			{
 	    				Intent intent = new Intent(StopActivity.this,StopActivity.class);
 	    				intent.putExtra("StopID", prev);
-	    				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+	    				//intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 	    				startActivity(intent);
 	    			}
 	    			else
@@ -462,7 +483,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	    			{
 	    				Intent intent = new Intent(StopActivity.this,StopActivity.class);
 	    				intent.putExtra("StopID", next);
-	    				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+	    				//intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 	    				startActivity(intent);
 	    			}
 	    			else

@@ -70,7 +70,6 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	private static final int MAP_IMAGE_ID = 5002;
 	private static final int MAP_LAYOUT_ID = 5003;
 	private static final int MAP_BUTTON_LAYOUT_ID = 5004;
-	private static final int STOP_LIST_ID =5005;
 	
 	//Stop IDs
 	private static final int MAIN_SCREEN_STOP_ID = -1;
@@ -242,27 +241,10 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		
 	}
 	
-//	@Override
-//	protected void onStart()
-//	{
-//		LinearLayout mapLayout = (LinearLayout)findViewById(MAP_LAYOUT_ID);
-//		ImageView mapView = new ImageView(this);
-//		mapView.setLayoutParams(IMAGE_LAYOUT_PARAMS);
-//		mapView.setImageBitmap(ImageProcessor.decodeSampledBitmapFromResource(getResources(), 
-//				R.drawable.cf1_trace, mapLayout.getWidth(), mapLayout.getHeight()));
-//		mapView.setAdjustViewBounds(true);
-//		mapView.setId(MAP_IMAGE_ID);
-//		mapLayout.addView(mapView);
-//		super.onStart();
-//	}
-//	
 	public void onClick(View v){
 		
 		int id = v.getId();
-		//Toast t = Toast.makeText(this, "Button Clicked " + id , Toast.LENGTH_LONG);
-		//t.show();
 		
-		//if QR Reader was clicked, open a new QR Scanner
 		if (id == QR_READER_ID){
 			Intent intent = new Intent(this,QRReaderActivitiy.class);
 			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -272,7 +254,6 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			ImageView map = (ImageView) findViewById(MAP_IMAGE_ID);
 			Intent intent = new Intent(this,ImageViewActivity.class);
 			intent.putExtra("values",map.getContentDescription());
-			//intent.putExtra("imageUrl", value)
 			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(intent);
 		}
@@ -280,7 +261,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		{
 			Intent intent = new Intent(this,StopActivity.class);
 			intent.putExtra("StopID", id);
-			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+			//intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(intent);
 		}
 		
