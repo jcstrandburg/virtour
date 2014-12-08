@@ -123,8 +123,8 @@ public class MapTouchImageView extends TouchImageView implements OnTouchListener
 				p.setStyle(Paint.Style.FILL_AND_STROKE);
 				PointF zoomedLocation = getZoomedPosition(s.getStopPositionX(),s.getStopPositionY());
 				p.setTextSize((this.getMeasuredHeight() / 50) + 10 * this.getCurrentZoom());
-				p.getTextBounds(s.getStopName(),0,s.getStopName().length(), bounds);
-				float length = p.measureText(s.getStopName());
+				p.getTextBounds(s.getStopRooNumber(),0,s.getStopRooNumber().length(), bounds);
+				float length = p.measureText(s.getStopRooNumber());
 				float height = bounds.bottom - bounds.top;
 				bounds.top = (int)(zoomedLocation.y - height - ((this.getMeasuredHeight() /100) * this.getCurrentZoom()));
 				bounds.bottom = bounds.top + (int)height + (int)(3 * this.getCurrentZoom());
@@ -139,7 +139,7 @@ public class MapTouchImageView extends TouchImageView implements OnTouchListener
 				//Draw Text
 				p.setStyle(Paint.Style.FILL_AND_STROKE);
 				p.setColor(Color.BLACK);
-				canvas.drawText(s.getStopName(), zoomedLocation.x - length/2, zoomedLocation.y - ((this.getMeasuredHeight() /100) * this.getCurrentZoom()), p);
+				canvas.drawText(s.getStopRooNumber(), zoomedLocation.x - length/2, zoomedLocation.y - ((this.getMeasuredHeight() /100) * this.getCurrentZoom()), p);
 				p.setColor(Color.RED);
 				canvas.drawCircle(zoomedLocation.x, zoomedLocation.y, (this.getMeasuredHeight() / 100) * this.getCurrentZoom(), p);
 			}
@@ -164,7 +164,7 @@ public class MapTouchImageView extends TouchImageView implements OnTouchListener
 			
 			PointF stopPos = this.getZoomedPosition(stops[i].getStopPositionX(), stops[i].getStopPositionY());
 			
-			if (stopPos.x + xMargin > x && stopPos.x - xMargin < x && stopPos.y + yMargin > y && stopPos.y - yMargin < y)
+			if (event.getPointerCount() == 1 && stopPos.x + xMargin > x && stopPos.x - xMargin < x && stopPos.y + yMargin > y && stopPos.y - yMargin < y)
 			{
 //				Toast To = Toast.makeText(this.getContext(), "YAY", Toast.LENGTH_LONG);
 //				To.show();

@@ -9,12 +9,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -24,14 +30,20 @@ import android.widget.Toast;
 
 import org.json.*;
 
-public class StopActivity extends Activity implements OnClickListener, OnTaskCompleted, OnContentLoaded {
+public class StopActivity extends Activity implements OnClickListener, OnTaskCompleted, OnContentLoaded, OnTouchListener {
 
 	private static final int MAIN_LAYOUT_ID = R.id.layout_stop;
 	private static final int MAP_IMAGE_ID = 5006;
 	private static final int BTN_NEXT_ID = 4999;
+	private static final int BTN_PREVIOUS_ID = 4998;
 	
 	int stopID;
+	int mapId;
 	int queuedContent = 0;
+	
+	private GestureDetector gestureDetector;
+	//View.OnTouchListener gestureListener;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,6 +57,8 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		//Zero out Title Bar
 		setTitle("");
 		BuildStop();
+		
+		gestureDetector = new GestureDetector(this, new MyGestureDetector());
 
 	}
 
@@ -57,11 +71,12 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	
 	private void BuildStop() {
 		//Create a ScrollView To Hold Everything
-		//ScrollView mainView = (ScrollView) findViewById(R.id.scroll_stop);
+		ScrollView mainView = (ScrollView) findViewById(R.id.scroll_stop);
 		
 		LinearLayout mainLayout = (LinearLayout) findViewById(MAIN_LAYOUT_ID);
 		mainLayout.setOrientation(LinearLayout.VERTICAL);
 		mainLayout.setVisibility(View.INVISIBLE);
+		mainView.setOnTouchListener(this);
 		
 		//Retrive the desired stop
 		StopRetrievalTask sr = new StopRetrievalTask(this);
@@ -98,22 +113,39 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 				e.printStackTrace();
 			}
 		}
-		addNextButton();
+		addNavigationButtons();
 			}
 	
-	private void addNextButton()
+	private void addNavigationButtons()
 	{
+		LinearLayout navigationLayout = new LinearLayout(this);
+		navigationLayout.setLayoutParams(MainActivity.CONTENT_LAYOUT_PARAMS);
+		navigationLayout.setOrientation(LinearLayout.HORIZONTAL);
+		
 		Button next = new Button(this);
-		next.setLayoutParams(MainActivity.CONTENT_LAYOUT_PARAMS);
+		android.widget.TableLayout.LayoutParams params = MainActivity.BUTTON_LAYOUT_PARAMS;
+		//params.gravity = Gravity.RIGHT;
+		next.setLayoutParams(params);
 		next.setId(BTN_NEXT_ID);
-		next.setText("Next Stop");
-		next.setGravity(Gravity.CENTER_HORIZONTAL);
+		next.setText("Next Stop");;
 		
 		next.setOnClickListener(this);
 		
+		Button previous = new Button(this);
+		//params.gravity = Gravity.LEFT;
+		previous.setLayoutParams(params);
+		previous.setId(BTN_PREVIOUS_ID);
+		previous.setText("Previous Stop");
+		
+		previous.setOnClickListener(this);
+		
+		navigationLayout.addView(previous);
+		navigationLayout.addView(next);
+		
 		LinearLayout mainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
-		mainLayout.addView(next);
+		mainLayout.addView(navigationLayout);
 	}
+	
 	private void AddTextWidget(JSONObject Widget) throws JSONException{
 		String titleString, content = "";
 		
@@ -219,8 +251,18 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	private FrameLayout GenerateMarkedMap(float markx, float marky, int MapId)
 	{
 		ArrayList<Float> marks = new ArrayList<Float>();
-		marks.add(markx);
-		marks.add(marky);
+		
+		Stop[] stops = Globals.getStops();
+		
+		for (Stop s : stops)
+		{
+			if (s.getStopMapID() == MapId)
+			{
+				marks.add(s.getStopPositionX());
+				marks.add(s.getStopPositionY());
+			}
+		}
+		
 		FrameLayout mapLayout = new FrameLayout(this);
 		mapLayout.setLayoutParams(MainActivity.MAIN_LAYOUT_PARAMS);
 		//Put map in layout
@@ -230,6 +272,8 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		mapView.setId(MAP_IMAGE_ID);
 		mapView.setImageResource(R.drawable.placeholder);
 		mapView.setVisibility(View.INVISIBLE);
+		mapView.setSelectedMark(markx, marky);
+		mapView.setOnClickListener(this);
 		
 		Map map = null;
 		
@@ -243,6 +287,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		}
 		
 		final Map thisMap = map;
+		mapView.setContentDescription(thisMap.getMapUrl() + "," + thisMap.getMapId());
 		
 		mapView.post(new Runnable(){
 
@@ -266,6 +311,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	public void onTaskCompleted(Stop[] s) {
 		// TODO Auto-generated method stub
 		Stop thisStop = s[0];
+		this.mapId = thisStop.getStopMapID();
 		
 		JSONArray stopContent = null;
 		try {
@@ -286,7 +332,16 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 
 	@Override
 	public void onClick(View v) {
-		if (v instanceof ImageView)
+		
+		if (v.getId() == MAP_IMAGE_ID)
+		{
+			ImageView mapView = (ImageView) findViewById(MAP_IMAGE_ID);
+	     	Intent intent = new Intent(this, ImageViewActivity.class);
+			intent.putExtra("values",mapView.getContentDescription());
+			startActivity(intent);
+		}
+		
+		else if (v instanceof ImageView)
 		{
 			Intent intent = new Intent(this, VideoPlayerActivity.class);
 			intent.putExtra("url",v.getContentDescription());
@@ -294,7 +349,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 			startActivity(intent);
 			
 		}
-		if (v.getId() == BTN_NEXT_ID)
+		else if (v.getId() == BTN_NEXT_ID)
 		{
 			int next = getNextStop();
 			
@@ -302,6 +357,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 			{
 				Intent intent = new Intent(this,StopActivity.class);
 				intent.putExtra("StopID", next);
+				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 				startActivity(intent);
 			}
 			else
@@ -309,6 +365,23 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 				Toast t = Toast.makeText(this, "No more Stops", Toast.LENGTH_LONG);
 				t.show();
 			}
+		}
+		else if (v.getId() == BTN_PREVIOUS_ID)
+		{
+			int prev = getPreviousStop();
+			
+			if (prev != -1)
+			{
+				Intent intent = new Intent(this,StopActivity.class);
+				intent.putExtra("StopID", prev);
+				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+				startActivity(intent);
+			}
+			else
+			{
+				Toast t = Toast.makeText(this, "No more Stops", Toast.LENGTH_LONG);
+				t.show();
+			}			
 		}
 	}
 	
@@ -321,6 +394,21 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 			if (stops[i].getStopID() == stopID)
 			{
 				return stops[i+1].getStopID();
+			}
+		}
+		
+		return -1;
+	}
+	
+	private int getPreviousStop() {
+		
+		Stop[] stops = Globals.getStops();
+		
+		for (int i = 1; i < stops.length; i++)
+		{
+			if (stops[i].getStopID() == stopID)
+			{
+				return stops[i-1].getStopID();
 			}
 		}
 		
@@ -344,7 +432,79 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		}
 		
 	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		return gestureDetector.onTouchEvent(event);
+	}
 	
+	@Override
+	public void onBackPressed() {
+		
+		Intent intent = new Intent(this,MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
+	}
 	
+	class MyGestureDetector extends SimpleOnGestureListener {
+		
+		private static final int SWIPE_MIN_DISTANCE = 120;
+		private static final int SWIPE_MAX_OFF_PATH = 250;
+		private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+	    @Override
+	    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+	        try {
+	            if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+	                return false;
+	            // right to left swipe
+	            if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+	                //Toast.makeText(StopActivity.this, "Left Swipe", Toast.LENGTH_SHORT).show();
+	                
+	    			int prev = getPreviousStop();
+	    			
+	    			if (prev != -1)
+	    			{
+	    				Intent intent = new Intent(StopActivity.this,StopActivity.class);
+	    				intent.putExtra("StopID", prev);
+	    				//intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+	    				startActivity(intent);
+	    			}
+	    			else
+	    			{
+	    				Toast t = Toast.makeText(StopActivity.this, "No more Stops", Toast.LENGTH_LONG);
+	    				t.show();
+	    			}			
+	                
+	            }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+	                //Toast.makeText(StopActivity.this, "Right Swipe", Toast.LENGTH_SHORT).show();
+	    			int next = getNextStop();
+	    			
+	    			if (next != -1)
+	    			{
+	    				Intent intent = new Intent(StopActivity.this,StopActivity.class);
+	    				intent.putExtra("StopID", next);
+	    				//intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+	    				startActivity(intent);
+	    			}
+	    			else
+	    			{
+	    				Toast t = Toast.makeText(StopActivity.this, "No more Stops", Toast.LENGTH_LONG);
+	    				t.show();
+	    			}
+	            }
+	        } catch (Exception e) {
+	            // nothing
+	        }
+	        return false;
+	    }
+	    
+	    @Override
+	    public boolean onDown(MotionEvent e) {
+	    	return true;
+	    }
+	}
 
 }
+
+
+
