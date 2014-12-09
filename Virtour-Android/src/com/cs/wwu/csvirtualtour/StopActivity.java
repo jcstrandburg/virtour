@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.SpannableString;
@@ -13,9 +14,11 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
@@ -23,6 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -59,6 +63,8 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		BuildStop();
 		
 		gestureDetector = new GestureDetector(this, new MyGestureDetector());
+		
+		
 
 	}
 
@@ -82,6 +88,27 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		StopRetrievalTask sr = new StopRetrievalTask(this);
 		sr.execute(stopID);
 		
+		mainLayout.post(new Runnable() {
+
+			@Override
+			public void run() {
+				initiateLoadingPopup();
+				
+			}
+		});
+		
+		
+	}
+	
+	private PopupWindow loadingPopup;
+	
+	private void initiateLoadingPopup() {
+		LayoutInflater inflater = (LayoutInflater) StopActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View LoadingLayout = inflater.inflate(R.layout.pupupwindow_loading, (ViewGroup) findViewById(R.id.loading_layout));
+		
+		loadingPopup = new PopupWindow(LoadingLayout,ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,true);
+		
+		loadingPopup.showAtLocation(LoadingLayout, Gravity.CENTER, 0, 0);
 		
 	}
 	
@@ -223,6 +250,8 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		RelativeLayout.LayoutParams lp = (android.widget.RelativeLayout.LayoutParams) playView.getLayoutParams();
 		lp.addRule(RelativeLayout.CENTER_IN_PARENT);
 		videoLayout.addView(playView);
+		
+		videoLayout.setOnTouchListener(this);
 		
 		//Add content to screen
 		LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
@@ -427,6 +456,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		
 		if (queuedContent == 0)
 		{
+			loadingPopup.dismiss();
 			LinearLayout MainLayout = (LinearLayout)findViewById(MAIN_LAYOUT_ID);
 			MainLayout.setVisibility(View.VISIBLE);
 		}
@@ -443,6 +473,7 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 		
 		Intent intent = new Intent(this,MainActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra("firstrun", false);
 		startActivity(intent);
 	}
 	
@@ -495,7 +526,14 @@ public class StopActivity extends Activity implements OnClickListener, OnTaskCom
 	        } catch (Exception e) {
 	            // nothing
 	        }
-	        return false;
+	        return true;
+	    }
+	    
+	    @Override
+	    public boolean onSingleTapConfirmed(MotionEvent e) {
+	    	
+	    	Toast.makeText(StopActivity.this, "Single Tap", Toast.LENGTH_LONG).show();
+	    	return true;
 	    }
 	    
 	    @Override
