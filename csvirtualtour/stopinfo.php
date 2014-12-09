@@ -21,17 +21,17 @@ $more = "<a href='stops.php'>List Of Stops</a>
 if($_SESSION['user'] != 0) {
 
 	if(empty($sent)) {
-		$row = mysqli_fetch_array(mysqli_query($link, "select * from Stops where StopID='$stopid'"));
-		$stopname = $row['StopName'];
-		$stoporder = $row['StopOrder'];
-		$stopcontent = $row['StopContent'];
-		$stopx = $row['StopX'];
-		$stopy = $row['StopY'];
-        $mapid = $row['MapID'];
+		$stmt = $link->prepare("select StopName, StopOrder, StopContent, StopX, StopY, MapID from Stops where StopID=?");
+        $stmt->bind_param("i", $stopid);
+        $stmt->execute();
+        $stmt->bind_result($stopname, $stoporder, $stopcontent, $stopx, $stopy, $mapid);
+        $stmt->fetch();
+        $stmt->close();
 	}
 	else {
-		$query = "update Stops set `StopName` = '$stopname', `StopOrder` = '$stoporder', `StopContent` = '$stopcontent', `StopX` = '$stopx', `StopY`='$stopy', `MapID`='$mapid'  where `StopID` = '$stopid'";
-		mysqli_query($link, $query);
+        $stmt = $writedb->prepare("update Stops set `StopName`=?, `StopOrder`=?, `StopContent`=?, `StopX`=?, `StopY`=?, `MapID`=?  where `StopID`=?");
+        $stmt->bind_param("sisddii", $stopname, $stoporder, $stopcontent, $stopx, $stopy, $mapid, $stopid);
+        $success = $stmt->execute();
     	header("Location:stops.php");
 	}
 }
@@ -60,7 +60,7 @@ function renderJSON() {
 
 $(document).ready( function() {
 	framework = new ComponentFramework( "compContainer");
-	framework.loadFromJSON('<?php echo addslashes($stopcontent)?>');
+	framework.loadFromJSON('<?php echo $stopcontent;?>');
     
     set_position( <?php echo "$stopx, $stopy";?>);
 

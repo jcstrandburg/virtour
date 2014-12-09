@@ -15,7 +15,14 @@ if($_SESSION['user'] != 0) {
 		$content = $content . 'Super User</h1>';
 	}
 	else {
-		$row = mysqli_fetch_array(mysqli_query($link, "select * from user where userid = " . $user));
+        $stmt = $link->prepare("select userid, username, password from user where userid =?");
+        $stmt->bind_param( "i", $user);
+        $stmt->execute();
+        $row = array();
+        $stmt->bind_result($row['userid'], $row['username'], $row['password']);
+        $stmt->fetch();
+        $stmt->close();
+
 		$content = $content . $row['username'] . '</h1>';
 	}
 	
@@ -25,12 +32,18 @@ if($_SESSION['user'] != 0) {
 			$alert = "Enter both values before click Change Password";
 		}
 		else if(strcmp($new1, $new2) == 0) {
+
+            $stmt = $writedb->prepare( "update user set password=? where userid=?");
+
 			if($user == "super") {
-				mysqli_query($link, "update user set password = '" . crypt($new1, $salt) . "' where userid = " . $_SESSION['user']);
+                $stmt->bind_param("si", crypt($new1, $salt), $_SESSION['user']);
 			}
 			else {
-				mysqli_query($link, "update user set password = '" . crypt($new1, $salt) . "' where userid = " . $user);
+                $stmt->bind_param("si", crypt($new1, $salt), $user);
 			}
+
+            $result = $stmt->execute();
+            $stmt->close();
 			header("Location:admin.php");
 		}
 		else {

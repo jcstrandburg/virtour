@@ -18,31 +18,24 @@ abstract class DataAPI {
 	public function Execute() {
 		global $dbname, $dbuser, $dbpass, $link;
 	
-		try {
-			$query = "Select * FROM Stops WHERE StopID='".$this->stopid."'";
-			
-			$stmt = mysqli_query($link, $query);
+        if ( $this->stopid == -1) {
+		    $query = "Select StopID, StopName, RoomNumber, StopOrder, StopX, StopY, MapID, StopQRIdentifier FROM Stops WHERE Active='yes'";
+		    $stmt = mysqli_query($link, $query);
+		    $rows = fake_fetch_all($stmt);
+		    $this->result["StopList"] = $rows;
+        }
+        else {
+			$stmt = mysqli_prepare($link, "Select StopID, StopName, RoomNumber, StopContent, StopX, StopY, StopQRIdentifier, StopOrder, MapID, Active FROM Stops WHERE StopID=?");
+            $stmt->bind_param("i", $this->stopid);
+            $stmt->execute();
+            $row = array();
+            $stmt->bind_result($row['StopID'], $row['StopName'], $row['RoomNumber'], $row['StopContent'], $row['StopX'], $row['StopY'], $row['StopQRIdentifier'], $row['StopOrder'], $row['MapID'], $row['Active']);
+            $stmt->fetch();
 
-			if(mysqli_num_rows($stmt) == 1) {
-				$row = mysqli_fetch_assoc($stmt);
-				$this->result = $row;
-			}
-			
-			else if ( $this->stopid == -1 ) {
-				$query = "Select StopID, StopName, RoomNumber, StopOrder, StopX, StopY, MapID, StopQRIdentifier FROM Stops WHERE Active='yes'";
-				$stmt = mysqli_query($link, $query);
-				$rows = fake_fetch_all($stmt);
-				$this->result["StopList"] = $rows;
-			}
-			
-			else {
-				$this->EchoErrorAndDie( "DB query returned no results for StopID=".$this->stopid);
-			}
-			$this->EchoResults();			
-		}
-		catch (PDOException $ex) {
-			$this->EchoErrorAndDie( "Exception: ".$ex->getMessage());			
-		}
+		    $this->result = $row;
+        }
+
+		$this->EchoResults();			
 	}
 	
 	abstract protected function EchoResults();

@@ -15,12 +15,14 @@ if ($filedir !== ".") {
     die("That file is not in this directory, this operation is not allowed for security reasons");
 }
 
-$query = "DELETE FROM `maps` WHERE `id`=$id";
-if (mysqli_query($writedb, $query)) {
+$stmt = $writedb->prepare("DELETE FROM `maps` WHERE `id`=?");
+$stmt->bind_param("i", $id);
+
+if ($stmt->execute()) {
     unlink($filename);
 }
 else {
-    die("Operation failed: ".mysqli_error($writedb));
+    die("Operation failed: ".$stmt->error);
 }
 
 header("Location: manage.php");
