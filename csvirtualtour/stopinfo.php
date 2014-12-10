@@ -9,7 +9,7 @@ if ( isset($_POST['sent'])) {
 	$stopid = $_POST['sent'];
 	$stopname = $_POST['stopname'];
 	$stoporder = $_POST['stoporder'];
-	$stopcontent = $_POST['stopcontent'];
+	$stopcontent = stripslashes( $_POST['stopcontent']);
 	$stopx = $_POST['stopx'];
 	$stopy = $_POST['stopy'];
 	$mapid = $_POST['mapid'];
