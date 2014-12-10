@@ -10,7 +10,7 @@ if ($result) {
     $serverurl = dirname( dirname( "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']));
 
     while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-        $row['url'] = $serverurl."/maps/".$row['url'];
+        $row['url'] = str_replace("%20", " ", $serverurl."/maps/".$row['url']);
         $out_results[] = $row;
     }
 
