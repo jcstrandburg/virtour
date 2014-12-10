@@ -15,11 +15,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -29,11 +26,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
-import android.widget.TextView;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.widget.*;
 
 public class MainActivity extends Activity implements OnClickListener, OnTaskCompleted, OnContentLoaded {
 
@@ -84,6 +76,15 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_main);
 		
+		if (this.getIntent().getExtras() != null)
+		{
+			boolean first = this.getIntent().getExtras().getBoolean("firstrun");
+			Globals.setFirstRun(first);
+		}
+		else
+		{
+			Globals.setFirstRun(true);
+		}
 		generateHome();
 		
 	}
@@ -111,6 +112,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 		scrollLayout.setLayoutParams(CONTENT_LAYOUT_PARAMS);
 		scrollLayout.setOrientation(LinearLayout.VERTICAL);
 		scrollLayout.setId(SCROLLING_LAYOUT_ID);
+		scrollLayout.setVisibility(View.INVISIBLE);
 		
 		//Add map with floor buttons
 		LinearLayout mapLayout = new LinearLayout(this);
@@ -183,6 +185,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			@Override
 			public void run() {
 				inititateIntroPopup();
+				initiateLoadingPopup();
 				
 			}
 			
@@ -191,14 +194,15 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 	}
 	
 	private PopupWindow pw;
+	View PopupLayout;
 	
 	private void inititateIntroPopup() {
 		LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
-		View layout = inflater.inflate(R.layout.popupwindow_stop_preview, (ViewGroup) findViewById(R.id.popup_layout));
-		pw = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,true);
+		PopupLayout = inflater.inflate(R.layout.popupwindow_stop_preview, (ViewGroup) findViewById(R.id.popup_layout));
+		pw = new PopupWindow(PopupLayout, ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,true);
 		
-		Button guide = (Button) layout.findViewById(R.id.btn_tour);
+		Button guide = (Button) PopupLayout.findViewById(R.id.btn_tour);
 		
 		guide.setOnClickListener(new OnClickListener() 
 		{
@@ -214,7 +218,7 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			
 		});
 		
-		Button close = (Button) layout.findViewById(R.id.btn_close);
+		Button close = (Button) PopupLayout.findViewById(R.id.btn_close);
 		
 		close.setOnClickListener(new OnClickListener() {
 
@@ -225,54 +229,40 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			
 		});
 		
-		pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
+	}
+	
+	private PopupWindow loadingPopup;
+	
+	private void initiateLoadingPopup() {
+		LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View LoadingLayout = inflater.inflate(R.layout.pupupwindow_loading, (ViewGroup) findViewById(R.id.loading_layout));
+		
+		loadingPopup = new PopupWindow(LoadingLayout,ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,true);
+		
+		loadingPopup.showAtLocation(LoadingLayout, Gravity.CENTER, 0, 0);
+		
 	}
 	
 	private void addStops(){
 	
 		StopRetrievalTask sr = new StopRetrievalTask(this);
 		sr.execute(MAIN_SCREEN_STOP_ID);
+		this.queuedContent++;
 
 	}
 	
 	private void retrieveMaps() {
 		MapRetrievalTask mr = new MapRetrievalTask(this);
 		mr.execute();
+		this.queuedContent++;
 		
 	}
-	
-	public void onClick(View v){
-		
-		int id = v.getId();
-		
-		if (id == QR_READER_ID){
-			Intent intent = new Intent(this,QRReaderActivitiy.class);
-			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-			startActivity(intent);
-		}
-		else if (id == MAP_IMAGE_ID) {
-			ImageView map = (ImageView) findViewById(MAP_IMAGE_ID);
-			Intent intent = new Intent(this,ImageViewActivity.class);
-			intent.putExtra("values",map.getContentDescription());
-			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-			startActivity(intent);
-		}
-		else
-		{
-			Intent intent = new Intent(this,StopActivity.class);
-			intent.putExtra("StopID", id);
-			//intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-			startActivity(intent);
-		}
-		
-	}
-	
 	
 	public void populateStops(int mapId){
 		
 		Stop[] stops = Globals.getStops();
 		
-		LinearLayout scrollLayout = (LinearLayout)findViewById(5001);
 		LinearLayout buttonLayout = (LinearLayout) findViewById(MAP_BUTTON_LAYOUT_ID);
 //		Log.d("Main","attempting to add stops");
 		//build a button for each stop (set id so we can determine which stop?)
@@ -297,10 +287,36 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 					buttonLayout.addView(Temp);
 				}
 			}
-			//ArrayAdapter<String> stopAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,android.R.id.text1,sArrayList);
-			//stopList.setAdapter(stopAdapter);
 		}
-		//scrollLayout.addView(buttonLayout);
+		this.queuedContent--;
+	}
+	
+	
+	@Override
+	public void onClick(View v){
+		
+		int id = v.getId();
+		
+		if (id == QR_READER_ID){
+			Intent intent = new Intent(this,QRReaderActivitiy.class);
+			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+			startActivity(intent);
+		}
+		else if (id == MAP_IMAGE_ID) {
+			ImageView map = (ImageView) findViewById(MAP_IMAGE_ID);
+			Intent intent = new Intent(this,ImageViewActivity.class);
+			intent.putExtra("values",map.getContentDescription());
+			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+			startActivity(intent);
+		}
+		else
+		{
+			Intent intent = new Intent(this,StopActivity.class);
+			intent.putExtra("StopID", id);
+			//intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+			startActivity(intent);
+		}
+		
 	}
 	
 	public void onTaskCompleted(Stop[] stops)
@@ -359,12 +375,27 @@ public class MainActivity extends Activity implements OnClickListener, OnTaskCom
 			}
 		});	
 		MapLayout.addView(mapSpinner);
+		queuedContent--;
 	}
 
 
 	@Override
 	public void onContentLoaded() {
 		// TODO Auto-generated method stub
+		queuedContent--;
+		
+		if (queuedContent <= 0)
+		{
+			loadingPopup.dismiss();
+			LinearLayout sv = (LinearLayout) findViewById(SCROLLING_LAYOUT_ID);
+			sv.setVisibility(View.VISIBLE);
+			
+			if (Globals.isFirstRun())
+			{
+				Globals.setFirstRun(false);
+				pw.showAtLocation(PopupLayout, Gravity.CENTER, 0, 0);
+			}
+		}
 		
 	}
 

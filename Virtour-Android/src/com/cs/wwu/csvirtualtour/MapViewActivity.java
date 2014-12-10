@@ -2,10 +2,7 @@ package com.cs.wwu.csvirtualtour;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 import android.view.*;
 
 public class MapViewActivity extends Activity implements OnContentLoaded {
