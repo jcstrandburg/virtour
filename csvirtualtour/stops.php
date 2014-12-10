@@ -34,7 +34,7 @@ if($_SESSION['user'] != 0) {
 				$table = $table . "<tr><td>" . $row['StopName'] . "</td>
 				<td>" . $row['StopOrder'] . "</td>
 				<td><a href='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CSVTour://" . $row['StopID'] . "' target='_blank'>Click for QR Code</a></td>
-				<td><a href='stopinfo.php?eid=" . $row['StopID'] . "'>Edit</a>/<a href='stops.php?did=" . $row['StopID'] . "' onClick='confirm(\"Are you sure?\");'>Delete</a>/
+				<td><a href='stopinfo.php?eid=" . $row['StopID'] . "'>Edit</a>/<a href='stops.php?did=" . $row['StopID'] . "' onClick='return confirm(\"Are you sure?\");'>Delete</a>/
 				<a href='stops.php?aid=" . $row['StopID'] . "&active=no'>Deactivate</a></td></tr>";
 			}
 			else {

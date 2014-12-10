@@ -100,7 +100,8 @@ ComponentFramework.prototype.renderJSON = function() {
 		results.push( this.components[i].getJSONObject());
 	}
 
-    return JSON.stringify( results);
+    json = JSON.stringify( results);
+    return json;
 }
 
 ComponentFramework.prototype.loadFromJSON = function( json) {
