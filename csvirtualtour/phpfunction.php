@@ -31,7 +31,7 @@ function footer($more) {
 		<hr>
 		<h3>" .
 			$more .
-			"<a href='index.php'>Logout</a>
+			"<a href='http://sw.cs.wwu.edu/~vut3/virtualtour/index.php'>Logout</a>
 		</h3>
 		</body>
 		</html>

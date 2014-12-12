@@ -5,6 +5,7 @@ include 'phpfunction.php';
 if (isset($_POST['sent'])) {
 	$sent = $_POST['sent'];
 	$stopname = $_POST['stopname'];
+	$roomnumber = $_POST['roomnumber'];
 	$stoporder = $_POST['stoporder'];
 	$stopcontent = stripslashes( $_POST['stopcontent']);
 	$stopx = $_POST['stopx'];
@@ -17,11 +18,11 @@ $more = "<a href='stops.php'>List Of Stops</a>
 
 if($_SESSION['user'] == 1 || $_SESSION['user'] == 2) {
 	if(!empty($sent)) {
-		$query = "insert into Stops (StopName, StopContent, StopOrder, StopX, StopY, MapID) values 
-			(?, ?, ?, ?, ?, ?)";
+		$query = "insert into Stops (StopName, RoomNumber, StopContent, StopOrder, StopX, StopY, MapID) values 
+			(?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $writedb->prepare($query);
-        $stmt->bind_param("ssiddi", $stopname, $stopcontent, $stoporder, $stopx, $stopy, $mapid);
+        $stmt->bind_param("sssiddi", $stopname, $roomnumber, $stopcontent, $stoporder, $stopx, $stopy, $mapid);
         $success = $stmt->execute();
         $stmt->close();
 
@@ -88,6 +89,7 @@ $maps = get_map_list();
 
 <form method="POST" name="theform">
 	<h2>Stop Name: <input type="text" name="stopname"></h2>
+	<h3>Room Number: <input type="text" name="roomnumber"></h3>
 	<h3>Stop Order: <input type="text" name="stoporder"></h3>
 	<br>
 	

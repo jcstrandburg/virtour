@@ -32,6 +32,7 @@ if($_SESSION['user'] != 0) {
 		while($row = mysqli_fetch_array($stops)) {
 			if($row['Active'] == "yes") {
 				$table = $table . "<tr><td>" . $row['StopName'] . "</td>
+				<td>" . $row['RoomNumber'] . "</td>
 				<td>" . $row['StopOrder'] . "</td>
 				<td><a href='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CSVTour://" . $row['StopID'] . "' target='_blank'>Click for QR Code</a></td>
 				<td><a href='stopinfo.php?eid=" . $row['StopID'] . "'>Edit</a>/<a href='stops.php?did=" . $row['StopID'] . "' onClick='return confirm(\"Are you sure?\");'>Delete</a>/
@@ -39,6 +40,7 @@ if($_SESSION['user'] != 0) {
 			}
 			else {
 				$table = $table . "<tr><td>" . $row['StopName'] . "</td>
+				<td>" . $row['RoomNumber'] . "</td>
 				<td>" . $row['StopOrder'] . "</td>
 				<td>None</td>
 				<td><a href='stops.php?aid=" . $row['StopID'] . "&active=yes'>Activate</a></td></tr>";
@@ -62,7 +64,7 @@ else {
 <?php echo $header?>
 	<h1>List Of Stops</h1>
 	<table>
-		<th>Stop Name</th><th>Stop Order</th><th>QR Code</th><th>Modify Stop</th>
+		<th>Stop Name</th><th>Room Number</th><th>Stop Order</th><th>QR Code</th><th>Modify Stop</th>
 		<?php echo $table?>
 	</table>
 <?php echo footer($more)?>

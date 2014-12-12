@@ -8,6 +8,7 @@ $sent = $_POST['sent'];
 if ( isset($_POST['sent'])) {
 	$stopid = $_POST['sent'];
 	$stopname = $_POST['stopname'];
+	$roomnumber = $_POST['roomnumber'];
 	$stoporder = $_POST['stoporder'];
 	$stopcontent = stripslashes( $_POST['stopcontent']);
 	$stopx = $_POST['stopx'];
@@ -21,16 +22,16 @@ $more = "<a href='stops.php'>List Of Stops</a>
 if($_SESSION['user'] != 0) {
 
 	if(empty($sent)) {
-		$stmt = $link->prepare("select StopName, StopOrder, StopContent, StopX, StopY, MapID from Stops where StopID=?");
+		$stmt = $link->prepare("select StopName, RoomNumber, StopOrder, StopContent, StopX, StopY, MapID from Stops where StopID=?");
         $stmt->bind_param("i", $stopid);
         $stmt->execute();
-        $stmt->bind_result($stopname, $stoporder, $stopcontent, $stopx, $stopy, $mapid);
+        $stmt->bind_result($stopname, $roomnumber, $stoporder, $stopcontent, $stopx, $stopy, $mapid);
         $stmt->fetch();
         $stmt->close();
 	}
 	else {
-        $stmt = $writedb->prepare("update Stops set `StopName`=?, `StopOrder`=?, `StopContent`=?, `StopX`=?, `StopY`=?, `MapID`=?  where `StopID`=?");
-        $stmt->bind_param("sisddii", $stopname, $stoporder, $stopcontent, $stopx, $stopy, $mapid, $stopid);
+        $stmt = $writedb->prepare("update Stops set `StopName`=?, `RoomNumber`=?, `StopOrder`=?, `StopContent`=?, `StopX`=?, `StopY`=?, `MapID`=?  where `StopID`=?");
+        $stmt->bind_param("ssisddii", $stopname, $roomnumber, $stoporder, $stopcontent, $stopx, $stopy, $mapid, $stopid);
         $success = $stmt->execute();
     	header("Location:stops.php");
 	}
@@ -90,6 +91,7 @@ $(document).ready( function() {
 
 <form method="post" name="theform">
 	<h1>Content for Stop Name: <input type="text" name="stopname" value="<?php echo $stopname?>"></h1>
+	<h3>Room Number: <input type="text" name="roomnumber" value="<?php echo $roomnumber?>"></h3>
 	<h3>Stop Order: <input type="text" name="stoporder" value="<?php echo $stoporder?>"></h3>
 
 	<div class='mapSelector'>
