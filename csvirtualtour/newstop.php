@@ -16,7 +16,7 @@ if (isset($_POST['sent'])) {
 $more = "<a href='stops.php'>List Of Stops</a>
 			</br>";
 
-if($_SESSION['user'] == 1 || $_SESSION['user'] == 2) {
+if($_SESSION['user'] != 0) {
 	if(!empty($sent)) {
 		$query = "insert into Stops (StopName, RoomNumber, StopContent, StopOrder, StopX, StopY, MapID) values 
 			(?, ?, ?, ?, ?, ?, ?)";
